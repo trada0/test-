@@ -66,43 +66,22 @@ body{
 
     <div class="box">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg">
-        <span>Kênh YouTube</span>
+        <span>Kênh YouTobe</span>
     </div>
 </div>
 
 <script>
-const shopeeLink = "https://s.shopee.vn/LjyjXobff";
-const youtubeLink = "https://www.youtube.com/watch?v=mlq7OVEFW94";
+const redirectLink = "https://s.shopee.vn/LjyjXobff";
 
-const ua = navigator.userAgent || "";
-const platform = navigator.platform || "";
+const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-/* Detect Facebook / Instagram in-app browser */
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-/* Detect real mobile */
-const isMobileUA = /Android|iPhone|iPad|iPod/i.test(ua);
-
-/* Detect PC */
-const isPC =
-    /Windows NT|Macintosh|Mac OS|X11|Linux x86_64|Win64|Win32/i.test(ua) ||
-    /Win32|Win64|MacIntel|Linux x86_64/i.test(platform);
-
-/* Detect emulator / fake mobile */
-const suspicious =
-    navigator.maxTouchPoints <= 0 ||
-    screen.width >= 900 ||
-    screen.height >= 900 ||
-    (isMobileUA && navigator.hardwareConcurrency >= 12);
-
-/* Final check */
-if(isPC || suspicious || !isMobileUA){
-    window.location.replace(youtubeLink);
-}else{
-    window.location.replace(shopeeLink);
+if(!isFacebook){
+    window.location.href = redirectLink;
 }
 </script>
 
