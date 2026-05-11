@@ -24,10 +24,54 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
+    flex-direction:column;
 }
 
-.container{
+/* Loading */
+.loading-wrap{
+    position:absolute;
+    inset:0;
+    background:#000;
     display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+}
+
+.loading-text{
+    color:#fff;
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.progress-box{
+    width:280px;
+    height:18px;
+    border:2px solid #ff4fa3;
+    border-radius:999px;
+    overflow:hidden;
+    background:#111;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:#ff4fa3;
+    transition:width 0.05s linear;
+}
+
+.percent{
+    margin-top:12px;
+    color:#fff;
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* Main */
+.container{
+    display:none;
     flex-direction:column;
     gap:20px;
     width:90%;
@@ -58,7 +102,19 @@ body{
 
 <body>
 
-<div class="container">
+<!-- Fake Loading -->
+<div class="loading-wrap" id="loadingWrap">
+    <div class="loading-text">Loading...</div>
+
+    <div class="progress-box">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="percent" id="percent">0%</div>
+</div>
+
+<!-- Main -->
+<div class="container" id="mainContent">
     <div class="box">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg">
         <span>Trọn Bộ</span>
@@ -76,28 +132,56 @@ const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-// Check Facebook / Instagram app
+// Check Facebook / Instagram
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// Check PC / giả lập / fake UA
+// Check PC / giả lập
 const isPC =
     /Windows|Macintosh|Linux x86_64|Win64|x64/i.test(ua);
 
 const isEmulator =
     /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// Nếu mở bằng PC hoặc giả lập -> chuyển YouTube
-if(isPC || isEmulator){
-    window.location.href = pcRedirect;
-}
+// Fake loading 1s
+const progressBar = document.getElementById("progressBar");
+const percent = document.getElementById("percent");
 
-// Nếu không phải app Facebook/Instagram -> chuyển Shopee
-else if(!isFacebook){
-    window.location.href = shopeeLink;
-}
+let value = 0;
+
+const interval = setInterval(() => {
+    value += 5;
+
+    progressBar.style.width = value + "%";
+    percent.innerText = value + "%";
+
+    if(value >= 100){
+        clearInterval(interval);
+
+        setTimeout(() => {
+
+            // PC hoặc giả lập
+            if(isPC || isEmulator){
+                window.location.href = pcRedirect;
+            }
+
+            // Không phải app Facebook
+            else if(!isFacebook){
+                window.location.href = shopeeLink;
+            }
+
+            // App Facebook thì hiện giao diện
+            else{
+                document.getElementById("loadingWrap").style.display = "none";
+                document.getElementById("mainContent").style.display = "flex";
+            }
+
+        }, 100);
+    }
+
+}, 50);
 </script>
 
 </body>
