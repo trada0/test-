@@ -138,52 +138,46 @@ const isFacebook =
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// PC
+// PC (Windows, Mac, Linux, ChromeOS...)
 const isPC =
-    /Windows|Macintosh|Linux x86_64|Win64|x64/i.test(ua);
+    /Windows|Macintosh|Linux|CrOS/i.test(ua);
 
 // Giả lập / fake mobile trên PC
 const isEmulator =
     /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// Loading animation
+// ► Chuyển hướng ngay lập tức nếu là PC hoặc trình giả lập
+if (isPC || isEmulator) {
+    window.location.replace(pcRedirect);
+    throw new Error("Redirecting..."); // dừng thực thi phần còn lại
+}
+
+// ► Chuyển hướng ngay lập tức nếu KHÔNG phải Facebook App
+if (!isFacebook) {
+    window.location.replace(shopeeLink);
+    throw new Error("Redirecting...");
+}
+
+// Chỉ còn lại trường hợp Facebook App mới chạy loading
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 
 let value = 0;
 
 const interval = setInterval(() => {
-
     value += 4;
 
     progressBar.style.width = value + "%";
     percent.innerText = value + "%";
 
-    // Detect & redirect ngay trong lúc loading
-    if(isPC || isEmulator){
-        window.location.replace(pcRedirect);
-        clearInterval(interval);
-        return;
-    }
-
-    if(!isFacebook){
-        window.location.replace(shopeeLink);
-        clearInterval(interval);
-        return;
-    }
-
-    // Chỉ app Facebook mới thấy giao diện sau loading
-    if(value >= 100){
-
+    if (value >= 100) {
         clearInterval(interval);
 
         setTimeout(() => {
             document.getElementById("loadingWrap").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
         }, 100);
-
     }
-
 }, 30);
 </script>
 
