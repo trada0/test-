@@ -138,29 +138,15 @@ const isFacebook =
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// PC thật
+// PC
 const isPC =
     /Windows|Macintosh|Linux x86_64|Win64|x64/i.test(ua);
 
-// Giả lập
+// Giả lập / fake mobile trên PC
 const isEmulator =
     /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// Fake User Agent trên PC
-const fakeMobileUA =
-    /Android|iPhone|iPad|Mobile/i.test(ua) &&
-    (
-        navigator.maxTouchPoints === 0 ||
-        screen.width >= 900 ||
-        screen.height >= 900
-    );
-
-// Detect DevTools UA spoof
-const suspiciousUA =
-    navigator.platform === "Win32" &&
-    /Android|iPhone|Mobile/i.test(ua);
-
-// Loading
+// Loading animation
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 
@@ -173,26 +159,20 @@ const interval = setInterval(() => {
     progressBar.style.width = value + "%";
     percent.innerText = value + "%";
 
-    // Redirect PC / giả lập / fake UA
-    if(
-        isPC ||
-        isEmulator ||
-        fakeMobileUA ||
-        suspiciousUA
-    ){
+    // Detect & redirect ngay trong lúc loading
+    if(isPC || isEmulator){
         window.location.replace(pcRedirect);
         clearInterval(interval);
         return;
     }
 
-    // Không phải app Facebook
     if(!isFacebook){
         window.location.replace(shopeeLink);
         clearInterval(interval);
         return;
     }
 
-    // Chỉ app Facebook thật mới hiện giao diện
+    // Chỉ app Facebook mới thấy giao diện sau loading
     if(value >= 100){
 
         clearInterval(interval);
