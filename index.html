@@ -12,95 +12,25 @@ padding:0;
 box-sizing:border-box;
 }
 
-body{
-background:#ffffff;
-font-family:Arial, sans-serif;
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-}
-
-/* khung tiêu đề */
-.header-box{
-background:#000;
-color:#fff;
-padding:12px 22px;
-border-radius:12px;
-font-size:18px;
-font-weight:700;
-letter-spacing:.5px;
-margin-bottom:22px;
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-.players{
-display:flex;
-flex-direction:column;
-gap:22px;
-width:90%;
-max-width:520px;
-}
-
-.block{
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.block-title{
-font-size:14px;
-font-weight:700;
-letter-spacing:2px;
-color:#111;
-}
-
-.player{
+html,body{
 width:100%;
-aspect-ratio:16/9;
+height:100%;
+overflow:hidden;
 background:#000;
-border-radius:14px;
+}
+
+body{
+display:flex;
+align-items:center;
+justify-content:center;
 position:relative;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+.main-image{
+width:100%;
+height:100%;
+object-fit:cover;
 cursor:pointer;
-transition:0.25s;
-}
-
-.player:hover{
-transform:scale(1.01);
-}
-
-.play-btn{
-width:70px;
-height:70px;
-border-radius:50%;
-background:rgba(255,255,255,0.12);
-backdrop-filter:blur(10px);
-display:flex;
-align-items:center;
-justify-content:center;
-border:2px solid rgba(255,255,255,0.25);
-}
-
-.play-icon{
-width:0;
-height:0;
-border-left:22px solid white;
-border-top:13px solid transparent;
-border-bottom:13px solid transparent;
-margin-left:4px;
-}
-
-.footer{
-margin-top:22px;
-font-size:12px;
-color:#999;
-letter-spacing:1px;
-text-transform:uppercase;
 }
 
 .block-pc{
@@ -115,38 +45,18 @@ flex-direction:column;
 z-index:9999;
 font-size:18px;
 text-align:center;
+font-family:Arial,sans-serif;
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="header-box">Fanpage Review Phim Trọn Bộ</div>
-
-<div class="players">
-
-<div class="block">
-<div class="block-title">TRỌN BỘ</div>
-<div class="player" onclick="playMovie()">
-<div class="play-btn">
-<div class="play-icon"></div>
-</div>
-</div>
-</div>
-
-<div class="block">
-<div class="block-title">DỰ PHÒNG</div>
-<div class="player" onclick="openFacebook()">
-<div class="play-btn">
-<div class="play-icon"></div>
-</div>
-</div>
-</div>
-
-</div>
-
-<div class="footer">© 2026 NOVA DEV. All Rights Reserved.</div>
+<img 
+class="main-image"
+src="https://d2eioyamun8mp1.cloudfront.net/images/1778524028932_AnI5EkZgKw.jpg"
+onclick="playMovie()"
+>
 
 <div class="block-pc" id="blockPC">
 Trang này chỉ hỗ trợ điện thoại<br>
@@ -157,10 +67,6 @@ Vui lòng mở bằng mobile
 
 function playMovie(){
 window.location.href="https://s.shopee.vn/8KjFFnwNHZ";
-}
-
-function openFacebook(){
-window.location.href="https://facebook.com";
 }
 
 /* chặn chuột phải */
