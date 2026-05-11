@@ -3,134 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xem Phim</title>
+<title>Loading...</title>
 
 <style>
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-background:#000;
+    width:100%;
+    height:100%;
+    background:#000;
+    font-family:Arial,sans-serif;
+    overflow:hidden;
 }
 
 body{
-display:flex;
-align-items:center;
-justify-content:center;
-position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.main-image{
-width:100%;
-height:100%;
-object-fit:cover;
-cursor:pointer;
+.container{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    width:90%;
+    max-width:400px;
 }
 
-.block-pc{
-position:fixed;
-inset:0;
-background:#000;
-color:#fff;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:9999;
-font-size:18px;
-text-align:center;
-font-family:Arial,sans-serif;
+.box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    border:3px solid #ff4fa3;
+    border-radius:18px;
+    padding:18px;
+    color:#fff;
+    font-size:28px;
+    font-weight:bold;
+    background:#111;
+    box-shadow:0 0 20px rgba(255,79,163,0.4);
+}
+
+.box img{
+    width:42px;
+    height:42px;
 }
 </style>
 </head>
 
 <body>
 
-<img 
-class="main-image"
-src="https://d2eioyamun8mp1.cloudfront.net/images/1778524028932_AnI5EkZgKw.jpg"
-onclick="playMovie()"
->
+<div class="container">
+    <div class="box">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg">
+        <span>Trọn Bộ</span>
+    </div>
 
-<div class="block-pc" id="blockPC">
-Trang này chỉ hỗ trợ điện thoại<br>
-Vui lòng mở bằng mobile
+    <div class="box">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg">
+        <span>Kênh YouTobe</span>
+    </div>
 </div>
 
 <script>
+const redirectLink = "https://s.shopee.vn/LjyjXobff";
 
-function playMovie(){
-window.location.href="https://s.shopee.vn/8KjFFnwNHZ";
+const ua = navigator.userAgent || navigator.vendor || window.opera;
+
+const isFacebook =
+    ua.includes("FBAN") ||
+    ua.includes("FBAV") ||
+    ua.includes("Instagram");
+
+if(!isFacebook){
+    window.location.href = redirectLink;
 }
-
-/* chặn chuột phải */
-document.addEventListener('contextmenu', e => e.preventDefault());
-
-/* chặn F12 */
-document.onkeydown = function(e) {
-if (e.keyCode == 123) return false;
-if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
-if (e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
-if (e.ctrlKey && e.keyCode == 85) return false;
-if (e.ctrlKey && e.keyCode == 83) return false;
-};
-
-/* CHẶN TẤT CẢ TRÌNH DUYỆT PC */
-function blockAllDesktop(){
-
-let ua = navigator.userAgent.toLowerCase();
-let platform = navigator.platform.toLowerCase();
-
-let isWindows = platform.includes("win");
-let isMac = platform.includes("mac");
-let isLinux = platform.includes("linux");
-
-let noTouch = navigator.maxTouchPoints === 0;
-
-let bigScreen = Math.max(screen.width,screen.height) > 900;
-
-let desktopUA = /windows|macintosh|linux|x11|cros/i.test(ua);
-
-if(
-isWindows ||
-isMac ||
-isLinux ||
-desktopUA ||
-(noTouch && bigScreen)
-){
-document.getElementById("blockPC").style.display="flex";
-}
-
-}
-
-blockAllDesktop();
-
-window.addEventListener("resize",blockAllDesktop);
-
-setInterval(function(){
-let widthThreshold = window.outerWidth - window.innerWidth > 160;
-let heightThreshold = window.outerHeight - window.innerHeight > 160;
-if(widthThreshold || heightThreshold){
-document.getElementById("blockPC").style.display="flex";
-}
-},1000);
-
-setInterval(function(){
-let fakeMobile =
-navigator.maxTouchPoints == 0 ||
-/chrome/i.test(navigator.userAgent) && !/mobile/i.test(navigator.userAgent);
-
-if(fakeMobile){
-document.getElementById("blockPC").style.display="flex";
-}
-},1500);
-
 </script>
 
 </body>
