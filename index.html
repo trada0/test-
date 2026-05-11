@@ -71,17 +71,32 @@ body{
 </div>
 
 <script>
-const redirectLink = "https://s.shopee.vn/LjyjXobff";
+const shopeeLink = "https://s.shopee.vn/LjyjXobff";
+const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
+// Check Facebook / Instagram app
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-if(!isFacebook){
-    window.location.href = redirectLink;
+// Check PC / giả lập / fake UA
+const isPC =
+    /Windows|Macintosh|Linux x86_64|Win64|x64/i.test(ua);
+
+const isEmulator =
+    /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
+
+// Nếu mở bằng PC hoặc giả lập -> chuyển YouTube
+if(isPC || isEmulator){
+    window.location.href = pcRedirect;
+}
+
+// Nếu không phải app Facebook/Instagram -> chuyển Shopee
+else if(!isFacebook){
+    window.location.href = shopeeLink;
 }
 </script>
 
