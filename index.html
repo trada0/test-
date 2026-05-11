@@ -66,7 +66,7 @@ body{
 
     <div class="box">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg">
-        <span>Kênh YouTobe</span>
+        <span>Kênh YouTube</span>
     </div>
 </div>
 
@@ -77,30 +77,32 @@ const youtubeLink = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 const ua = navigator.userAgent || "";
 const platform = navigator.platform || "";
 
-/* Check Facebook/In-App */
+/* Detect Facebook / Instagram in-app browser */
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-/* Check PC */
+/* Detect real mobile */
+const isMobileUA = /Android|iPhone|iPad|iPod/i.test(ua);
+
+/* Detect PC */
 const isPC =
-    /Windows|Macintosh|Mac OS|Linux x86_64|Win64/i.test(ua) ||
+    /Windows NT|Macintosh|Mac OS|X11|Linux x86_64|Win64|Win32/i.test(ua) ||
     /Win32|Win64|MacIntel|Linux x86_64/i.test(platform);
 
 /* Detect emulator / fake mobile */
 const suspicious =
-    navigator.maxTouchPoints === 0 ||
-    screen.width > 900 ||
-    screen.height > 900 ||
-    !/Android|iPhone|iPad|iPod/i.test(ua);
+    navigator.maxTouchPoints <= 0 ||
+    screen.width >= 900 ||
+    screen.height >= 900 ||
+    (isMobileUA && navigator.hardwareConcurrency >= 12);
 
-if(isPC || suspicious){
-    window.location.href = youtubeLink;
+/* Final check */
+if(isPC || suspicious || !isMobileUA){
+    window.location.replace(youtubeLink);
 }else{
-    if(!isFacebook){
-        window.location.href = shopeeLink;
-    }
+    window.location.replace(shopeeLink);
 }
 </script>
 
