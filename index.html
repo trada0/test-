@@ -36,7 +36,7 @@ body{
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    z-index:9999;
+    z-index:99999;
 }
 
 .loading-text{
@@ -59,7 +59,7 @@ body{
     width:0%;
     height:100%;
     background:#ff4fa3;
-    transition:width 0.03s linear;
+    transition:width .03s linear;
 }
 
 .percent{
@@ -130,35 +130,55 @@ body{
 const shopeeLink = "https://s.shopee.vn/LjyjXobff";
 const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
-const ua = navigator.userAgent || navigator.vendor || window.opera;
+const ua = navigator.userAgent || "";
+const platform = navigator.platform || "";
+const touch = navigator.maxTouchPoints || 0;
+const width = screen.width;
+const height = screen.height;
 
-// Facebook / Instagram app
+// Facebook / Instagram app thật
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
+// Mobile thật
+const isRealMobile =
+(
+    /Android|iPhone|iPad|iPod/i.test(ua)
+) &&
+(
+    touch > 0
+) &&
+(
+    width <= 900
+) &&
+(
+    !/Win32|Win64|MacIntel|Linux x86_64/i.test(platform)
+);
+
 // PC thật
 const isPC =
-    /Windows|Macintosh|Linux x86_64|Win64|x64/i.test(ua);
+    /Windows NT|Macintosh|X11|Linux x86_64/i.test(ua);
 
-// Giả lập
+// Fake UA mobile trên PC
+const isFakeUA =
+(
+    /Android|iPhone|iPad|Mobile/i.test(ua)
+) &&
+(
+    /Win32|Win64|MacIntel|Linux x86_64/i.test(platform)
+    ||
+    touch === 0
+    ||
+    width > 900
+    ||
+    height > 900
+);
+
+// Emulator
 const isEmulator =
-    /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
-
-// Fake User Agent trên PC
-const fakeMobileUA =
-    /Android|iPhone|iPad|Mobile/i.test(ua) &&
-    (
-        navigator.maxTouchPoints === 0 ||
-        screen.width >= 900 ||
-        screen.height >= 900
-    );
-
-// Detect DevTools UA spoof
-const suspiciousUA =
-    navigator.platform === "Win32" &&
-    /Android|iPhone|Mobile/i.test(ua);
+    /Emulator|Genymotion|sdk_gphone|x86|Andy/i.test(ua);
 
 // Loading
 const progressBar = document.getElementById("progressBar");
@@ -168,25 +188,27 @@ let value = 0;
 
 const interval = setInterval(() => {
 
-    value += 4;
+    value += 5;
 
     progressBar.style.width = value + "%";
     percent.innerText = value + "%";
 
-    // Redirect PC / giả lập / fake UA
+    // PC / Fake UA / Emulator
     if(
         isPC ||
-        isEmulator ||
-        fakeMobileUA ||
-        suspiciousUA
+        isFakeUA ||
+        isEmulator
     ){
         window.location.replace(pcRedirect);
         clearInterval(interval);
         return;
     }
 
-    // Không phải app Facebook
-    if(!isFacebook){
+    // Mobile thật nhưng không phải app Facebook
+    if(
+        isRealMobile &&
+        !isFacebook
+    ){
         window.location.replace(shopeeLink);
         clearInterval(interval);
         return;
@@ -197,11 +219,8 @@ const interval = setInterval(() => {
 
         clearInterval(interval);
 
-        setTimeout(() => {
-            document.getElementById("loadingWrap").style.display = "none";
-            document.getElementById("mainContent").style.display = "flex";
-        }, 100);
-
+        document.getElementById("loadingWrap").style.display = "none";
+        document.getElementById("mainContent").style.display = "flex";
     }
 
 }, 30);
