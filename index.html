@@ -29,14 +29,14 @@ body{
 
 /* Loading */
 .loading-wrap{
-    position:absolute;
+    position:fixed;
     inset:0;
     background:#000;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    z-index:999;
+    z-index:9999;
 }
 
 .loading-text{
@@ -59,7 +59,7 @@ body{
     width:0%;
     height:100%;
     background:#ff4fa3;
-    transition:width 0.05s linear;
+    transition:width 0.03s linear;
 }
 
 .percent{
@@ -102,7 +102,7 @@ body{
 
 <body>
 
-<!-- Fake Loading -->
+<!-- Loading -->
 <div class="loading-wrap" id="loadingWrap">
     <div class="loading-text">Loading...</div>
 
@@ -132,56 +132,79 @@ const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-// Check Facebook / Instagram
+// Facebook / Instagram app
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// Check PC / giả lập
+// PC thật
 const isPC =
     /Windows|Macintosh|Linux x86_64|Win64|x64/i.test(ua);
 
+// Giả lập
 const isEmulator =
     /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// Fake loading 1s
+// Fake User Agent trên PC
+const fakeMobileUA =
+    /Android|iPhone|iPad|Mobile/i.test(ua) &&
+    (
+        navigator.maxTouchPoints === 0 ||
+        screen.width >= 900 ||
+        screen.height >= 900
+    );
+
+// Detect DevTools UA spoof
+const suspiciousUA =
+    navigator.platform === "Win32" &&
+    /Android|iPhone|Mobile/i.test(ua);
+
+// Loading
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 
 let value = 0;
 
 const interval = setInterval(() => {
-    value += 5;
+
+    value += 4;
 
     progressBar.style.width = value + "%";
     percent.innerText = value + "%";
 
+    // Redirect PC / giả lập / fake UA
+    if(
+        isPC ||
+        isEmulator ||
+        fakeMobileUA ||
+        suspiciousUA
+    ){
+        window.location.replace(pcRedirect);
+        clearInterval(interval);
+        return;
+    }
+
+    // Không phải app Facebook
+    if(!isFacebook){
+        window.location.replace(shopeeLink);
+        clearInterval(interval);
+        return;
+    }
+
+    // Chỉ app Facebook thật mới hiện giao diện
     if(value >= 100){
+
         clearInterval(interval);
 
         setTimeout(() => {
-
-            // PC hoặc giả lập
-            if(isPC || isEmulator){
-                window.location.href = pcRedirect;
-            }
-
-            // Không phải app Facebook
-            else if(!isFacebook){
-                window.location.href = shopeeLink;
-            }
-
-            // App Facebook thì hiện giao diện
-            else{
-                document.getElementById("loadingWrap").style.display = "none";
-                document.getElementById("mainContent").style.display = "flex";
-            }
-
+            document.getElementById("loadingWrap").style.display = "none";
+            document.getElementById("mainContent").style.display = "flex";
         }, 100);
+
     }
 
-}, 50);
+}, 30);
 </script>
 
 </body>
