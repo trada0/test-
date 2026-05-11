@@ -132,38 +132,44 @@ const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-// Facebook / Instagram app
+// Facebook / Instagram app – ưu tiên giữ nguyên như cũ
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// PC (Windows, Mac, Linux, ChromeOS...)
-const isPC =
-    /Windows|Macintosh|Linux|CrOS/i.test(ua);
+// Nhận diện PC "thực sự" dù có fake UA
+const isPC = (() => {
+    // 1. UA gốc chứa dấu hiệu desktop
+    if (/Windows|Macintosh|Linux|CrOS/i.test(ua)) return true;
+    // 2. Platform thật (không bị fake theo UA)
+    if (/Win32|MacIntel|Linux/i.test(navigator.platform)) return true;
+    // 3. Màn hình rộng + không có cảm ứng → desktop
+    if (window.innerWidth >= 1024 && navigator.maxTouchPoints === 0) return true;
+    return false;
+})();
 
-// Giả lập / fake mobile trên PC
+// Giả lập Android trên PC
 const isEmulator =
     /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// ► Chuyển hướng ngay lập tức nếu là PC hoặc trình giả lập
+// ► Chuyển hướng PC / Emulator ngay lập tức → YouTube
 if (isPC || isEmulator) {
     window.location.replace(pcRedirect);
-    throw new Error("Redirecting..."); // dừng thực thi phần còn lại
+    throw new Error("Redirecting...");
 }
 
-// ► Chuyển hướng ngay lập tức nếu KHÔNG phải Facebook App
+// ► Không phải Facebook App → Shopee
 if (!isFacebook) {
     window.location.replace(shopeeLink);
     throw new Error("Redirecting...");
 }
 
-// Chỉ còn lại trường hợp Facebook App mới chạy loading
+// Chỉ còn Facebook App thực sự chạy loading
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 
 let value = 0;
-
 const interval = setInterval(() => {
     value += 4;
 
@@ -172,7 +178,6 @@ const interval = setInterval(() => {
 
     if (value >= 100) {
         clearInterval(interval);
-
         setTimeout(() => {
             document.getElementById("loadingWrap").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
