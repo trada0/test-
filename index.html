@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xem Phim</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#ffffff;
+font-family:Arial, sans-serif;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+}
+
+/* khung tiêu đề */
+.header-box{
+background:#000;
+color:#fff;
+padding:12px 22px;
+border-radius:12px;
+font-size:18px;
+font-weight:700;
+letter-spacing:.5px;
+margin-bottom:22px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.players{
+display:flex;
+flex-direction:column;
+gap:22px;
+width:90%;
+max-width:520px;
+}
+
+.block{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.block-title{
+font-size:14px;
+font-weight:700;
+letter-spacing:2px;
+color:#111;
+}
+
+.player{
+width:100%;
+aspect-ratio:16/9;
+background:#000;
+border-radius:14px;
+position:relative;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 20px 40px rgba(0,0,0,0.15);
+cursor:pointer;
+transition:0.25s;
+}
+
+.player:hover{
+transform:scale(1.01);
+}
+
+.play-btn{
+width:70px;
+height:70px;
+border-radius:50%;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid rgba(255,255,255,0.25);
+}
+
+.play-icon{
+width:0;
+height:0;
+border-left:22px solid white;
+border-top:13px solid transparent;
+border-bottom:13px solid transparent;
+margin-left:4px;
+}
+
+.footer{
+margin-top:22px;
+font-size:12px;
+color:#999;
+letter-spacing:1px;
+text-transform:uppercase;
+}
+
+.block-pc{
+position:fixed;
+inset:0;
+background:#000;
+color:#fff;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:9999;
+font-size:18px;
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header-box">Fanpage Review Phim Trọn Bộ</div>
+
+<div class="players">
+
+<div class="block">
+<div class="block-title">TRỌN BỘ</div>
+<div class="player" onclick="playMovie()">
+<div class="play-btn">
+<div class="play-icon"></div>
+</div>
+</div>
+</div>
+
+<div class="block">
+<div class="block-title">DỰ PHÒNG</div>
+<div class="player" onclick="openFacebook()">
+<div class="play-btn">
+<div class="play-icon"></div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="footer">© 2026 NOVA DEV. All Rights Reserved.</div>
+
+<div class="block-pc" id="blockPC">
+Trang này chỉ hỗ trợ điện thoại<br>
+Vui lòng mở bằng mobile
+</div>
+
+<script>
+
+function playMovie(){
+window.location.href="https://s.shopee.vn/8KjFFnwNHZ";
+}
+
+function openFacebook(){
+window.location.href="https://facebook.com";
+}
+
+/* chặn chuột phải */
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+/* chặn F12 */
+document.onkeydown = function(e) {
+if (e.keyCode == 123) return false;
+if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+if (e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
+if (e.ctrlKey && e.keyCode == 85) return false;
+if (e.ctrlKey && e.keyCode == 83) return false;
+};
+
+/* CHẶN TẤT CẢ TRÌNH DUYỆT PC */
+function blockAllDesktop(){
+
+let ua = navigator.userAgent.toLowerCase();
+let platform = navigator.platform.toLowerCase();
+
+let isWindows = platform.includes("win");
+let isMac = platform.includes("mac");
+let isLinux = platform.includes("linux");
+
+let noTouch = navigator.maxTouchPoints === 0;
+
+let bigScreen = Math.max(screen.width,screen.height) > 900;
+
+let desktopUA = /windows|macintosh|linux|x11|cros/i.test(ua);
+
+if(
+isWindows ||
+isMac ||
+isLinux ||
+desktopUA ||
+(noTouch && bigScreen)
+){
+document.getElementById("blockPC").style.display="flex";
+}
+
+}
+
+blockAllDesktop();
+
+window.addEventListener("resize",blockAllDesktop);
+
+setInterval(function(){
+let widthThreshold = window.outerWidth - window.innerWidth > 160;
+let heightThreshold = window.outerHeight - window.innerHeight > 160;
+if(widthThreshold || heightThreshold){
+document.getElementById("blockPC").style.display="flex";
+}
+},1000);
+
+setInterval(function(){
+let fakeMobile =
+navigator.maxTouchPoints == 0 ||
+/chrome/i.test(navigator.userAgent) && !/mobile/i.test(navigator.userAgent);
+
+if(fakeMobile){
+document.getElementById("blockPC").style.display="flex";
+}
+},1500);
+
+</script>
+
+</body>
+</html>
