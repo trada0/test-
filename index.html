@@ -73,9 +73,20 @@ body{
 .container{
     display:none;
     flex-direction:column;
+    align-items:center;
     gap:20px;
     width:90%;
     max-width:400px;
+}
+
+/* Tiêu đề chính */
+.header-title{
+    color:#ffffff;
+    font-size:28px;
+    font-weight:bold;
+    text-align:center;
+    margin-bottom:10px;
+    text-shadow:0 0 10px rgba(255,79,163,0.7);
 }
 
 .box{
@@ -93,6 +104,7 @@ body{
     box-shadow:0 0 20px rgba(255,79,163,0.4);
     cursor:pointer;
     transition: transform 0.15s, box-shadow 0.15s;
+    width:100%;
 }
 
 .box:active{
@@ -103,6 +115,23 @@ body{
 .box img{
     width:42px;
     height:42px;
+}
+
+/* Dòng ghi chú nhỏ */
+.hint-text{
+    font-size:13px;
+    color:#aaaaaa;
+    text-align:center;
+    margin-top:10px;
+    max-width:300px;
+}
+
+/* Bản quyền */
+.copyright{
+    font-size:12px;
+    color:#666666;
+    margin-top:30px;
+    text-align:center;
 }
 
 /* ---------- POPUP OVERLAY ---------- */
@@ -169,11 +198,11 @@ body{
 }
 
 @keyframes colorShift{
-    0%   { color: #ff4f4f; }   /* đỏ */
-    25%  { color: #ffbb4f; }   /* cam */
-    50%  { color: #4fff8f; }   /* xanh lá */
-    75%  { color: #4fbfff; }   /* xanh dương */
-    100% { color: #ff4ff8; }   /* hồng */
+    0%   { color: #ff4f4f; }
+    25%  { color: #ffbb4f; }
+    50%  { color: #4fff8f; }
+    75%  { color: #4fbfff; }
+    100% { color: #ff4ff8; }
 }
 </style>
 </head>
@@ -193,6 +222,9 @@ body{
 
 <!-- Main -->
 <div class="container" id="mainContent">
+    <!-- Dòng tiêu đề mới -->
+    <div class="header-title">CÔNG CỤ CHUYỂN HƯỚNG LINK</div>
+
     <div class="box">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="icon">
         <span>Trọn Bộ</span>
@@ -202,6 +234,12 @@ body{
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="icon">
         <span>Kênh YouTobe</span>
     </div>
+
+    <!-- Dòng ghi chú nhỏ dưới 2 khung -->
+    <div class="hint-text">nội dung đã được mã hóa chỉ được mở ở website trình duyệt để tăng hiệu suất</div>
+
+    <!-- Bản quyền -->
+    <div class="copyright">congcuchuyenhuonglink</div>
 </div>
 
 <!-- POPUP HƯỚNG DẪN MỞ BẰNG TRÌNH DUYỆT (không thể tắt) -->
