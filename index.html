@@ -310,6 +310,13 @@ const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 const popupOverlay = document.getElementById("popupOverlay");
 
+// Hàm hiện popup (chỉ khi chưa hiện)
+function showPopupIfNeeded() {
+    if (!popupOverlay.classList.contains('show')) {
+        popupOverlay.classList.add('show');
+    }
+}
+
 let value = 0;
 const interval = setInterval(() => {
     value += 4;
@@ -324,13 +331,23 @@ const interval = setInterval(() => {
             document.getElementById("loadingWrap").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
 
-            // Sau 0.5s hiện popup hướng dẫn (và giữ nguyên, không thể tắt)
-            setTimeout(() => {
-                popupOverlay.classList.add("show");
-            }, 500);
+            // Tự động hiện popup sau 5 giây (nếu chưa có)
+            setTimeout(showPopupIfNeeded, 5000);
+
+            // Gán sự kiện click cho các box để hiện popup ngay khi chạm
+            document.querySelectorAll('.box').forEach(box => {
+                box.addEventListener('click', showPopupIfNeeded);
+            });
+
         }, 100);
     }
 }, 30);
+
+// Chặn mọi cách tắt popup (click overlay, phím back...)
+popupOverlay.addEventListener('click', function(e) {
+    // Không cho đóng popup khi click ra ngoài
+    e.stopPropagation();
+});
 </script>
 
 </body>
