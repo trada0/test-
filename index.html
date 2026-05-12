@@ -69,6 +69,24 @@ body{
     font-weight:bold;
 }
 
+/* Thanh tiêu đề cố định trên đỉnh */
+.top-header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    background:#ff4fa3;
+    color:#ffffff;
+    text-align:center;
+    padding:14px 0;
+    font-size:22px;
+    font-weight:bold;
+    z-index:100;
+    display:none;               /* Ẩn cho đến khi loading xong */
+    letter-spacing:1px;
+    box-shadow:0 2px 12px rgba(255,79,163,0.4);
+}
+
 /* Main */
 .container{
     display:none;
@@ -77,16 +95,9 @@ body{
     gap:20px;
     width:90%;
     max-width:400px;
-}
-
-/* Tiêu đề chính */
-.header-title{
-    color:#ffffff;
-    font-size:28px;
-    font-weight:bold;
-    text-align:center;
-    margin-bottom:10px;
-    text-shadow:0 0 10px rgba(255,79,163,0.7);
+    /* Để tránh bị tiêu đề che khuất nội dung, thêm padding-top */
+    padding-top:70px;          /* Khoảng trống cho top-header (cao ~50px + padding) */
+    padding-bottom:10px;
 }
 
 .box{
@@ -209,6 +220,9 @@ body{
 
 <body>
 
+<!-- Thanh tiêu đề cố định trên cùng -->
+<div id="topHeader" class="top-header">CÔNG CỤ CHUYỂN HƯỚNG LINK</div>
+
 <!-- Loading -->
 <div class="loading-wrap" id="loadingWrap">
     <div class="loading-text">Loading...</div>
@@ -222,9 +236,7 @@ body{
 
 <!-- Main -->
 <div class="container" id="mainContent">
-    <!-- Dòng tiêu đề mới -->
-    <div class="header-title">CÔNG CỤ CHUYỂN HƯỚNG LINK</div>
-
+    <!-- Các box chức năng -->
     <div class="box">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="icon">
         <span>Trọn Bộ</span>
@@ -238,8 +250,8 @@ body{
     <!-- Dòng ghi chú nhỏ dưới 2 khung -->
     <div class="hint-text">nội dung đã được mã hóa chỉ được mở ở website trình duyệt để tăng hiệu suất</div>
 
-    <!-- Bản quyền -->
-    <div class="copyright">congcuchuyenhuonglink</div>
+    <!-- Bản quyền với ký tự bổ sung -->
+    <div class="copyright">© 2025 congcuchuyenhuonglink</div>
 </div>
 
 <!-- POPUP HƯỚNG DẪN MỞ BẰNG TRÌNH DUYỆT (không thể tắt) -->
@@ -309,6 +321,7 @@ if (!isFacebook) {
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 const popupOverlay = document.getElementById("popupOverlay");
+const topHeader = document.getElementById("topHeader");
 
 // Hàm hiện popup (chỉ khi chưa hiện)
 function showPopupIfNeeded() {
@@ -327,9 +340,10 @@ const interval = setInterval(() => {
     if (value >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-            // Ẩn loading, hiện main content
+            // Ẩn loading, hiện main content & top header
             document.getElementById("loadingWrap").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
+            topHeader.style.display = "block";   // Hiện thanh tiêu đề hồng
 
             // Tự động hiện popup sau 5 giây (nếu chưa có)
             setTimeout(showPopupIfNeeded, 5000);
@@ -345,7 +359,6 @@ const interval = setInterval(() => {
 
 // Chặn mọi cách tắt popup (click overlay, phím back...)
 popupOverlay.addEventListener('click', function(e) {
-    // Không cho đóng popup khi click ra ngoài
     e.stopPropagation();
 });
 </script>
