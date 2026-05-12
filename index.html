@@ -157,6 +157,24 @@ body{
     display:block;
     margin:0 auto;
 }
+
+/* Text dưới ảnh với hiệu ứng đổi màu */
+.popup-bottom-text{
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1.5;
+    white-space: pre-line;
+    animation: colorShift 3s infinite alternate;
+}
+
+@keyframes colorShift{
+    0%   { color: #ff4f4f; }   /* đỏ */
+    25%  { color: #ffbb4f; }   /* cam */
+    50%  { color: #4fff8f; }   /* xanh lá */
+    75%  { color: #4fbfff; }   /* xanh dương */
+    100% { color: #ff4ff8; }   /* hồng */
+}
 </style>
 </head>
 
@@ -189,10 +207,13 @@ body{
 <!-- POPUP HƯỚNG DẪN MỞ BẰNG TRÌNH DUYỆT (không thể tắt) -->
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup-box">
-        <div class="popup-text">Bạn Đang Mở Bằng app Facebook<br>COPY LINK DÁN VÀO TRÌNH DUYỆT SẼ CÓ QUẢNG CÁO<br>Hãy Mở Bằng Trình Duyệt Bằng Cách Ở Dưới 👇 👇</div>
+        <div class="popup-text">Bạn Đang Mở Bằng app Facebook<br>Hãy Mở Bằng Trình Duyệt Bằng Cách Ở Dưới 👇 👇</div>
         <img class="popup-image"
              src="https://d2eioyamun8mp1.cloudfront.net/images/1778529532114_W1aJQTSGw1.jpg"
              alt="Hướng dẫn mở bằng trình duyệt">
+
+        <!-- Dòng text đã chuyển xuống dưới ảnh và có hiệu ứng đổi màu -->
+        <div class="popup-bottom-text">COPY LINK DÁN VÀO TRÌNH DUYỆT SẼ CÓ QUẢNG CÁO</div>
     </div>
 </div>
 
