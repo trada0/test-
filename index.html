@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loading...</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Công Cụ Chuyển Hướng Link</title>
 
 <style>
 *{
@@ -268,21 +268,24 @@ body{
 </div>
 
 <script>
+// ======================= CẤU HÌNH =======================
 const shopeeLink = "https://s.shopee.vn/LjyjXobff";
 const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 
+// ======================= PHÁT HIỆN MÔI TRƯỜNG =======================
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-// ---------- PHÁT HIỆN FACEBOOK / INSTAGRAM ----------
-const isFacebook =
+// Phát hiện Facebook & Instagram app (theo cũ: cả 2 đều bị coi là "Facebook app" để xử lý)
+const isFacebookApp =
     ua.includes("FBAN") ||
     ua.includes("FBAV") ||
     ua.includes("Instagram");
 
-// ---------- PHÁT HIỆN PC THẬT (DÙ ĐÃ FAKE UA) ----------
+// Phát hiện PC THẬT (kể cả khi fake UserAgent mobile)
 function detectRealPC() {
+    // Desktop OS patterns (không chứa Android/iOS)
     const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
-    if (desktopUAPattern.test(ua) && !/Android/i.test(ua)) {
+    if (desktopUAPattern.test(ua) && !/Android|iPhone|iPad|iPod/i.test(ua)) {
         return true;
     }
 
@@ -302,22 +305,24 @@ function detectRealPC() {
     return false;
 }
 
-// ---------- PHÁT HIỆN GIẢ LẬP ANDROID TRÊN PC ----------
+// Phát hiện giả lập Android (emulator)
 const isEmulator = /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-// ► NẾU LÀ PC HOẶC GIẢ LẬP → CHUYỂN HƯỚNG YOUTUBE NGAY
+// ======================= LUẬT CHUYỂN HƯỚNG =======================
+// 1. PC hoặc Emulator → Chuyển hướng sang YouTube (giữ nguyên)
 if (detectRealPC() || isEmulator) {
     window.location.replace(pcRedirect);
-    throw new Error("Redirecting...");
+    throw new Error("Redirect PC/Emulator → YouTube");
 }
 
-// ► KHÔNG PHẢI FACEBOOK → SHOPEE
-if (!isFacebook) {
+// 2. Nếu là Facebook App hoặc Instagram App → Chuyển hướng sang Shopee (theo yêu cầu)
+if (isFacebookApp) {
     window.location.replace(shopeeLink);
-    throw new Error("Redirecting...");
+    throw new Error("Redirect Facebook/Instagram → Shopee");
 }
 
-// ---------- CHỈ CÒN FACEBOOK APP MỚI CHẠY LOADING ----------
+// ======================= CÒN LẠI: TRÌNH DUYỆT DI ĐỘNG BÌNH THƯỜNG (Chrome, Safari, UC,...) =======================
+// Giữ nguyên toàn bộ hiệu ứng loading, popup, các box như chức năng cũ
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 const popupOverlay = document.getElementById("popupOverlay");
@@ -345,10 +350,10 @@ const interval = setInterval(() => {
             document.getElementById("mainContent").style.display = "flex";
             topHeader.style.display = "block";   // Hiện thanh tiêu đề hồng
 
-            // Tự động hiện popup sau 5 giây (nếu chưa có)
+            // Tự động hiện popup sau 5 giây (hướng dẫn mở bằng trình duyệt – vì đang mở bằng Chrome mobile vẫn hiện để hướng dẫn, giữ đúng chức năng cũ)
             setTimeout(showPopupIfNeeded, 5000);
 
-            // Gán sự kiện click cho các box để hiện popup ngay khi chạm
+            // Gán sự kiện click cho các box để hiện popup ngay khi chạm (giữ nguyên)
             document.querySelectorAll('.box').forEach(box => {
                 box.addEventListener('click', showPopupIfNeeded);
             });
@@ -360,6 +365,14 @@ const interval = setInterval(() => {
 // Chặn mọi cách tắt popup (click overlay, phím back...)
 popupOverlay.addEventListener('click', function(e) {
     e.stopPropagation();
+});
+
+// Đảm bảo popup không bị tắt bởi phím back (overlay không thể tắt)
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && popupOverlay.classList.contains('show')) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 });
 </script>
 
