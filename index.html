@@ -1,362 +1,71 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Công Cụ Chuyển Hướng Link</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,body{
-    width:100%;
-    height:100%;
-    background:#000;
-    font-family:Arial,sans-serif;
-    overflow:hidden;
-}
-
-body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-}
-
-/* Loading */
-.loading-wrap{
-    position:fixed;
-    inset:0;
-    background:#000;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
-}
-
-.loading-text{
-    color:#fff;
-    font-size:32px;
-    font-weight:bold;
-    margin-bottom:20px;
-}
-
-.progress-box{
-    width:280px;
-    height:18px;
-    border:2px solid #ff4fa3;
-    border-radius:999px;
-    overflow:hidden;
-    background:#111;
-}
-
-.progress-bar{
-    width:0%;
-    height:100%;
-    background:#ff4fa3;
-    transition:width 0.03s linear;
-}
-
-.percent{
-    margin-top:12px;
-    color:#fff;
-    font-size:22px;
-    font-weight:bold;
-}
-
-/* Thanh tiêu đề cố định trên đỉnh */
-.top-header{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    background:#ff4fa3;
-    color:#ffffff;
-    text-align:center;
-    padding:14px 0;
-    font-size:22px;
-    font-weight:bold;
-    z-index:100;
-    display:none;               /* Ẩn cho đến khi loading xong */
-    letter-spacing:1px;
-    box-shadow:0 2px 12px rgba(255,79,163,0.4);
-}
-
-/* Main */
-.container{
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    gap:20px;
-    width:90%;
-    max-width:400px;
-    /* Để tránh bị tiêu đề che khuất nội dung, thêm padding-top */
-    padding-top:70px;          /* Khoảng trống cho top-header (cao ~50px + padding) */
-    padding-bottom:10px;
-}
-
-.box{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:14px;
-    border:3px solid #ff4fa3;
-    border-radius:18px;
-    padding:18px;
-    color:#fff;
-    font-size:28px;
-    font-weight:bold;
-    background:#111;
-    box-shadow:0 0 20px rgba(255,79,163,0.4);
-    cursor:pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    width:100%;
-}
-
-.box:active{
-    transform:scale(0.96);
-    box-shadow:0 0 28px rgba(255,79,163,0.7);
-}
-
-.box img{
-    width:42px;
-    height:42px;
-}
-
-/* Dòng ghi chú nhỏ */
-.hint-text{
-    font-size:13px;
-    color:#aaaaaa;
-    text-align:center;
-    margin-top:10px;
-    max-width:300px;
-}
-
-/* Bản quyền */
-.copyright{
-    font-size:12px;
-    color:#666666;
-    margin-top:30px;
-    text-align:center;
-}
-
-/* ---------- POPUP OVERLAY ---------- */
-.popup-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.85);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:10001;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    padding:20px;
-}
-
-.popup-overlay.show{
-    display:flex;
-}
-
-.popup-box{
-    background:#1a1a1a;
-    border:2px solid #ff4fa3;
-    border-radius:22px;
-    padding:28px 22px 24px;
-    max-width:360px;
-    width:100%;
-    text-align:center;
-    box-shadow:0 0 35px rgba(255,79,163,0.5);
-    animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes popIn{
-    0%{ transform:scale(0.7); opacity:0; }
-    100%{ transform:scale(1); opacity:1; }
-}
-
-.popup-text{
-    color:#fff;
-    font-size:18px;
-    font-weight:bold;
-    line-height:1.5;
-    margin-bottom:18px;
-    white-space:pre-line;
-}
-
-.popup-image{
-    width:100%;
-    max-width:300px;
-    border-radius:14px;
-    border:2px solid rgba(255,79,163,0.5);
-    display:block;
-    margin:0 auto;
-}
-
-/* Text dưới ảnh với hiệu ứng đổi màu */
-.popup-bottom-text{
-    margin-top: 16px;
-    font-size: 18px;
-    font-weight: bold;
-    line-height: 1.5;
-    white-space: pre-line;
-    animation: colorShift 3s infinite alternate;
-}
-
-@keyframes colorShift{
-    0%   { color: #ff4f4f; }
-    25%  { color: #ffbb4f; }
-    50%  { color: #4fff8f; }
-    75%  { color: #4fbfff; }
-    100% { color: #ff4ff8; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta refresh tĩnh: sẽ chuyển hướng đến Shopee sau 0 giây -->
+    <meta http-equiv="refresh" content="0; url=https://s.shopee.vn/LjyjXobff">
+    <title>Chuyển hướng...</title>
+    <style>
+        /* Giữ nền đen đơn giản, không còn giao diện cầu kỳ */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .info {
+            background: rgba(255,79,163,0.2);
+            padding: 20px;
+            border-radius: 12px;
+        }
+    </style>
 </head>
-
 <body>
-
-<!-- Thanh tiêu đề cố định trên cùng -->
-<div id="topHeader" class="top-header">CÔNG CỤ CHUYỂN HƯỚNG LINK</div>
-
-<!-- Loading -->
-<div class="loading-wrap" id="loadingWrap">
-    <div class="loading-text">Loading...</div>
-
-    <div class="progress-box">
-        <div class="progress-bar" id="progressBar"></div>
+    <div class="info">
+        Đang chuyển hướng, vui lòng đợi...
     </div>
 
-    <div class="percent" id="percent">0%</div>
-</div>
+    <script>
+        // Chỉ can thiệp nếu là PC hoặc giả lập (muốn sang YouTube thay vì Shopee)
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-<!-- Main -->
-<div class="container" id="mainContent">
-    <!-- Các box chức năng -->
-    <div class="box">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="icon">
-        <span>Trọn Bộ</span>
-    </div>
+        function detectRealPC() {
+            const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
+            if (desktopUAPattern.test(ua) && !/Android|iPhone|iPad|iPod/i.test(ua)) return true;
+            const platform = navigator.platform || "";
+            if (/Win32|MacIntel|Linux x86_64|Linux i686/i.test(platform)) return true;
+            const noTouch = (navigator.maxTouchPoints || 0) === 0;
+            const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
+            const largeScreen = window.innerWidth >= 1024;
+            if (noTouch && finePointer) return true;
+            if (noTouch && largeScreen) return true;
+            if (finePointer && largeScreen) return true;
+            return false;
+        }
 
-    <div class="box">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="icon">
-        <span>Kênh YouTobe</span>
-    </div>
+        const isEmulator = /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
 
-    <!-- Dòng ghi chú nhỏ dưới 2 khung -->
-    <div class="hint-text">nội dung đã được mã hóa chỉ được mở ở website trình duyệt để tăng hiệu suất</div>
-
-    <!-- Bản quyền với ký tự bổ sung -->
-    <div class="copyright">© 2025 congcuchuyenhuonglink</div>
-</div>
-
-<!-- POPUP HƯỚNG DẪN MỞ BẰNG TRÌNH DUYỆT (không thể tắt) -->
-<div class="popup-overlay" id="popupOverlay">
-    <div class="popup-box">
-        <div class="popup-text">Bạn Đang Mở Bằng app Facebook<br>Hãy Mở Bằng Trình Duyệt Bằng Cách Ở Dưới 👇 👇</div>
-        <img class="popup-image"
-             src="https://d2eioyamun8mp1.cloudfront.net/images/1778529532114_W1aJQTSGw1.jpg"
-             alt="Hướng dẫn mở bằng trình duyệt">
-
-        <!-- Dòng text đã chuyển xuống dưới ảnh và có hiệu ứng đổi màu -->
-        <div class="popup-bottom-text">COPY LINK DÁN VÀO TRÌNH DUYỆT SẼ CÓ QUẢNG CÁO</div>
-    </div>
-</div>
-
-<script>
-// ======================= CẤU HÌNH =======================
-const shopeeLink = "https://s.shopee.vn/LjyjXobff";
-const pcRedirect = "https://www.youtube.com/watch?v=mlq7OVEFW94";
-
-// ======================= PHÁT HIỆN MÔI TRƯỜNG =======================
-const ua = navigator.userAgent || navigator.vendor || window.opera;
-
-// 1. Phát hiện Facebook & Instagram app
-const isFacebookApp = ua.includes("FBAN") || ua.includes("FBAV") || ua.includes("Instagram");
-
-// 2. Phát hiện PC thật (kể cả khi fake UA mobile)
-function detectRealPC() {
-    const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
-    if (desktopUAPattern.test(ua) && !/Android|iPhone|iPad|iPod/i.test(ua)) {
-        return true;
-    }
-    const platform = navigator.platform || "";
-    if (/Win32|MacIntel|Linux x86_64|Linux i686/i.test(platform)) {
-        return true;
-    }
-    const noTouch = (navigator.maxTouchPoints || 0) === 0;
-    const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
-    const largeScreen = window.innerWidth >= 1024;
-    if (noTouch && finePointer) return true;
-    if (noTouch && largeScreen) return true;
-    if (finePointer && largeScreen) return true;
-    return false;
-}
-
-// 3. Phát hiện giả lập Android
-const isEmulator = /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
-
-// ======================= LUẬT CHUYỂN HƯỚNG =======================
-// Ưu tiên 1: PC hoặc Emulator -> sang YouTube
-if (detectRealPC() || isEmulator) {
-    window.location.replace(pcRedirect);
-    throw new Error("Redirect PC/Emulator → YouTube");
-}
-
-// Ưu tiên 2: Facebook / Instagram app -> chuyển hướng SANG SHOPEE (theo yêu cầu)
-if (isFacebookApp) {
-    window.location.replace(shopeeLink);
-    throw new Error("Redirect Facebook/Instagram → Shopee");
-}
-
-// ======================= CÒN LẠI: TRÌNH DUYỆT DI ĐỘNG BÌNH THƯỜNG =======================
-// Giữ nguyên toàn bộ hiệu ứng loading, popup, các box chức năng
-const progressBar = document.getElementById("progressBar");
-const percent = document.getElementById("percent");
-const popupOverlay = document.getElementById("popupOverlay");
-const topHeader = document.getElementById("topHeader");
-
-function showPopupIfNeeded() {
-    if (!popupOverlay.classList.contains('show')) {
-        popupOverlay.classList.add('show');
-    }
-}
-
-let value = 0;
-const interval = setInterval(() => {
-    value += 4;
-    progressBar.style.width = value + "%";
-    percent.innerText = value + "%";
-
-    if (value >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-            document.getElementById("loadingWrap").style.display = "none";
-            document.getElementById("mainContent").style.display = "flex";
-            topHeader.style.display = "block";
-
-            setTimeout(showPopupIfNeeded, 5000);
-
-            document.querySelectorAll('.box').forEach(box => {
-                box.addEventListener('click', showPopupIfNeeded);
-            });
-        }, 100);
-    }
-}, 30);
-
-// Chặn mọi cách tắt popup
-popupOverlay.addEventListener('click', (e) => e.stopPropagation());
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && popupOverlay.classList.contains('show')) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-});
-</script>
-
+        // Nếu là PC hoặc emulator → huỷ meta refresh và đi YouTube
+        if (detectRealPC() || isEmulator) {
+            // Tìm và xóa thẻ meta refresh
+            const metas = document.getElementsByTagName('meta');
+            for (let i = 0; i < metas.length; i++) {
+                if (metas[i].getAttribute('http-equiv') === 'refresh') {
+                    metas[i].parentNode.removeChild(metas[i]);
+                    break;
+                }
+            }
+            // Chuyển hướng sang YouTube
+            window.location.replace("https://www.youtube.com/watch?v=mlq7OVEFW94");
+        }
+        // Còn lại: giữ nguyên meta refresh → tự động sang Shopee (kể cả Facebook app, bot, trình duyệt thường)
+    </script>
 </body>
 </html>
