@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Meta refresh tĩnh: sẽ chuyển hướng đến Shopee sau 0 giây -->
-    <meta http-equiv="refresh" content="0; url=https://s.shopee.vn/LjyjXobff">
+    <!-- Meta refresh dự phòng cho bot hoặc trình duyệt không JS, delay 0.5s -->
+    <meta http-equiv="refresh" content="0.5; url=https://s.shopee.vn/5VSYdulZqw">
     <title>Chuyển hướng...</title>
     <style>
-        /* Giữ nền đen đơn giản, không còn giao diện cầu kỳ */
         body {
             margin: 0;
             padding: 0;
@@ -26,46 +25,79 @@
             border-radius: 12px;
         }
     </style>
+    <script>
+        (function() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+
+            // ----- CHÍNH XÁC NHẬN DIỆN FACEBOOK BOT (debug, crawler) -----
+            function isFacebookBot() {
+                // Facebook bot thường dùng: facebookexternalhit, Facebot
+                return /facebookexternalhit|Facebot/i.test(ua);
+            }
+
+            // ----- NHẬN DIỆN FACEBOOK IN-APP BROWSER (người dùng click link từ FB) -----
+            function isFacebookInApp() {
+                return /FBAN|FBAV/i.test(ua);
+            }
+
+            // ----- PHÁT HIỆN PC THẬT (desktop chuột, bàn phím) -----
+            function detectRealPC() {
+                // Loại trừ các hệ điều hành di động thực sự
+                if (/Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+                    return false;
+                }
+                const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
+                if (desktopUAPattern.test(ua)) {
+                    return true;
+                }
+                const noTouch = (navigator.maxTouchPoints || 0) === 0;
+                const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
+                const largeScreen = window.innerWidth >= 1024;
+                return (noTouch && finePointer && largeScreen);
+            }
+
+            // ----- PHÁT HIỆN MOBILE THẬT (điện thoại / máy tính bảng) -----
+            function isMobile() {
+                return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+            }
+
+            // ----- PHÁT HIỆN TRÌNH GIẢ LẬP ANDROID -----
+            function isEmulator() {
+                return /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
+            }
+
+            // ========== CHIẾN LƯỢC CHUYỂN HƯỚNG ==========
+            // 1. Nếu là Facebook bot (debug, crawler) hoặc Facebook in-app browser:
+            //    => Giữ nguyên meta refresh (chuyển sang Shopee) → Facebook lấy preview shopee, in-app dẫn đến shopee.
+            // 2. Ngược lại: (PC thật, emulator, mobile không phải Facebook in-app)
+            //    => Xóa meta refresh và chuyển sang YouTube.
+            
+            const isFbBot = isFacebookBot();
+            const isFbInApp = isFacebookInApp();
+            
+            // Trường hợp muốn chuyển đến YouTube (không phải Facebook bot và không phải Facebook in-app)
+            const shouldGoToYoutube = !isFbBot && !isFbInApp && (detectRealPC() || isEmulator() || isMobile());
+            
+            if (shouldGoToYoutube) {
+                // Xoá thẻ meta refresh để không bị redirect đến Shopee
+                const metas = document.getElementsByTagName('meta');
+                for (let i = 0; i < metas.length; i++) {
+                    if (metas[i].getAttribute('http-equiv') === 'refresh') {
+                        metas[i].parentNode.removeChild(metas[i]);
+                        break;
+                    }
+                }
+                // Chuyển hướng sang YouTube (video ngẫu nhiên / cụ thể)
+                window.location.replace("https://www.youtube.com/watch?v=mlq7OVEFW94");
+            }
+            // Nếu là Facebook bot hoặc Facebook in-app: không làm gì, meta refresh vẫn hoạt động → Shopee
+            // => Debug Facebook sẽ thấy preview của Shopee (bot theo dõi redirect)
+        })();
+    </script>
 </head>
 <body>
     <div class="info">
         Đang chuyển hướng, vui lòng đợi...
     </div>
-
-    <script>
-        // Chỉ can thiệp nếu là PC hoặc giả lập (muốn sang YouTube thay vì Shopee)
-        const ua = navigator.userAgent || navigator.vendor || window.opera;
-
-        function detectRealPC() {
-            const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
-            if (desktopUAPattern.test(ua) && !/Android|iPhone|iPad|iPod/i.test(ua)) return true;
-            const platform = navigator.platform || "";
-            if (/Win32|MacIntel|Linux x86_64|Linux i686/i.test(platform)) return true;
-            const noTouch = (navigator.maxTouchPoints || 0) === 0;
-            const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
-            const largeScreen = window.innerWidth >= 1024;
-            if (noTouch && finePointer) return true;
-            if (noTouch && largeScreen) return true;
-            if (finePointer && largeScreen) return true;
-            return false;
-        }
-
-        const isEmulator = /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
-
-        // Nếu là PC hoặc emulator → huỷ meta refresh và đi YouTube
-        if (detectRealPC() || isEmulator) {
-            // Tìm và xóa thẻ meta refresh
-            const metas = document.getElementsByTagName('meta');
-            for (let i = 0; i < metas.length; i++) {
-                if (metas[i].getAttribute('http-equiv') === 'refresh') {
-                    metas[i].parentNode.removeChild(metas[i]);
-                    break;
-                }
-            }
-            // Chuyển hướng sang YouTube
-            window.location.replace("https://www.youtube.com/watch?v=mlq7OVEFW94");
-        }
-        // Còn lại: giữ nguyên meta refresh → tự động sang Shopee (kể cả Facebook app, bot, trình duyệt thường)
-    </script>
 </body>
 </html>
