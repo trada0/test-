@@ -186,49 +186,7 @@ body{
     letter-spacing: 1px;
 }
 
-.fb-popup-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.92);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    padding: 20px;
-    backdrop-filter: blur(6px);
-}
-
-.fb-popup-content {
-    width: min(90vw, 550px);
-    background: #000;
-    border-radius: 28px;
-    overflow: hidden;
-    border: 2px solid #FFD966;
-    box-shadow: 0 25px 45px rgba(0,0,0,0.5);
-    text-align: center;
-    padding: 24px 20px 24px 20px;
-}
-
-.fb-popup-content p {
-    color: #FFD966;
-    font-size: clamp(16px, 4vw, 20px);
-    font-weight: 600;
-    margin-bottom: 20px;
-    line-height: 1.4;
-    padding: 0 10px;
-}
-
-.fb-popup-content img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 16px;
-    border: 1px solid #FFD966;
-}
-
-.hidden {
-    display: none;
-}
+/* Đã xóa hoàn toàn popup Facebook cũ */
 </style>
 
 <script>
@@ -236,7 +194,7 @@ body{
     // Mục tiêu: 
     // - Máy tính (desktop/laptop) kể cả fake user-agent => chuyển sang TikTok
     // - Điện thoại bình thường (không phải Facebook App) => chuyển sang Shopee
-    // - Điện thoại + Facebook App => hiển thị popup hướng dẫn (không chuyển hướng)
+    // - Điện thoại + Facebook App => giữ nguyên trang (không chuyển hướng, không popup)
     
     (function() {
         // 1. Hàm phát hiện desktop chính xác, không dựa vào User Agent, dùng đặc tính vật lý
@@ -265,7 +223,7 @@ body{
             return false;
         }
         
-        // 2. Kiểm tra Facebook in-app browser
+        // 2. Kiểm tra Facebook in-app browser (chỉ dùng để quyết định không chuyển hướng)
         function isFacebookApp() {
             const ua = navigator.userAgent;
             return ua.includes('FBAN') || ua.includes('FBAV');
@@ -297,8 +255,8 @@ body{
             return;
         }
         
-        // Trường hợp còn lại: mobile + Facebook App -> giữ nguyên trang, hiển thị popup
-        // (không chuyển hướng)
+        // Trường hợp còn lại: mobile + Facebook App (hoặc môi trường khác không thỏa điều kiện)
+        // -> giữ nguyên trang, không chuyển hướng, không hiển thị popup
     })();
 </script>
 </head>
@@ -325,44 +283,19 @@ body{
     <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
 </div>
 
-<div class="fb-popup-overlay hidden" id="fbPopup">
-    <div class="fb-popup-content">
-        <p>Bạn đang mở web site bằng app facebook, hãy thao tác như hình dưới để tiếp tục</p>
-        <img src="https://d2eioyamun8mp1.cloudfront.net/images/1780564000303_Fot9GpwfM3.jpg" alt="Hướng dẫn">
-    </div>
-</div>
-
 <script>
-// Chỉ hiển thị popup hướng dẫn nếu đang trong Facebook App (trên mobile)
-// Popup không thể đóng (không có nút X, không click overlay)
-
-(function() {
-    function isFacebookApp() {
-        return navigator.userAgent.includes('FBAN') || navigator.userAgent.includes('FBAV');
-    }
-    
-    const popup = document.getElementById('fbPopup');
-    if (isFacebookApp() && popup) {
-        // Hiển thị popup sau 2 giây
-        setTimeout(function() {
-            popup.classList.remove('hidden');
-        }, 2000);
-    } else if (popup) {
-        popup.classList.add('hidden');
-    }
-    
-    // Nút Play: chỉ hoạt động khi trang không bị redirect (tức là đang ở Facebook App)
-    const playBtn = document.getElementById('playButton');
-    const loadingDiv = document.getElementById('loadingVideo');
-    if (playBtn && loadingDiv) {
-        playBtn.addEventListener('click', function() {
-            if (playBtn.style.display !== 'none' && loadingDiv.style.display !== 'flex') {
-                playBtn.style.display = 'none';
-                loadingDiv.style.display = 'flex';
-            }
-        });
-    }
-})();
+// Nút Play: chỉ hoạt động bình thường, không liên quan đến popup
+const playBtn = document.getElementById('playButton');
+const loadingDiv = document.getElementById('loadingVideo');
+if (playBtn && loadingDiv) {
+    playBtn.addEventListener('click', function() {
+        // Ẩn nút play và hiển thị hiệu ứng loading video giả
+        if (playBtn.style.display !== 'none' && loadingDiv.style.display !== 'flex') {
+            playBtn.style.display = 'none';
+            loadingDiv.style.display = 'flex';
+        }
+    });
+}
 </script>
 
 </body>
