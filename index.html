@@ -1,369 +1,83 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WWW-YOUTOBE.COM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta refresh dự phòng cho bot hoặc trình duyệt không JS, delay 0.5s -->
+    <meta http-equiv="refresh" content="0.5; url=https://s.shopee.vn/5VSYdulZqw">
+    <title>Chuyển hướng...</title>
+    <!-- Đã xóa toàn bộ CSS của popup -->
+    <script>
+        (function() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+            // ----- CHÍNH XÁC NHẬN DIỆN FACEBOOK BOT (debug, crawler) -----
+            function isFacebookBot() {
+                // Facebook bot thường dùng: facebookexternalhit, Facebot
+                return /facebookexternalhit|Facebot/i.test(ua);
+            }
 
-body{
-    background: #FFF8E7;  /* vàng nhạt chủ đạo */
-    font-family: 'Segoe UI', Arial, sans-serif;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-}
+            // ----- NHẬN DIỆN FACEBOOK IN-APP BROWSER (người dùng click link từ FB) -----
+            function isFacebookInApp() {
+                return /FBAN|FBAV/i.test(ua);
+            }
 
-.header{
-    width:100%;
-    background:#000;
-    padding:20px 0;
-    text-align:center;
-    border-bottom: 3px solid #FFD966;
-}
+            // ----- PHÁT HIỆN PC THẬT (desktop chuột, bàn phím) -----
+            function detectRealPC() {
+                // Loại trừ các hệ điều hành di động thực sự
+                if (/Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+                    return false;
+                }
+                const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
+                if (desktopUAPattern.test(ua)) {
+                    return true;
+                }
+                const noTouch = (navigator.maxTouchPoints || 0) === 0;
+                const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
+                const largeScreen = window.innerWidth >= 1024;
+                return (noTouch && finePointer && largeScreen);
+            }
 
-.header h1{
-    color:#FFD966;
-    font-size:clamp(32px,8vw,90px);
-    font-weight:800;
-    letter-spacing:3px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
+            // ----- PHÁT HIỆN MOBILE THẬT (điện thoại / máy tính bảng) -----
+            function isMobile() {
+                return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+            }
 
-.main{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:7vw 4vw;
-}
+            // ----- PHÁT HIỆN TRÌNH GIẢ LẬP ANDROID -----
+            function isEmulator() {
+                return /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
+            }
 
-.video-box{
-    width:min(90vw,760px);
-    aspect-ratio:16/9;
-    background:#000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    border-radius: 24px;
-    box-shadow: 0 20px 35px rgba(0,0,0,0.25);
-    border: 2px solid #FFD966;
-    overflow: hidden;
-}
-
-.play-btn {
-    width: 90px;
-    height: 90px;
-    background: #FFD966;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    position: relative;
-}
-
-.play-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: rgba(255, 217, 102, 0.4);
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-    transition: all 0.4s ease;
-    z-index: -1;
-}
-
-.play-btn:hover::before {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.3);
-}
-
-.play-btn:hover {
-    transform: scale(1.08);
-    background: #FFC107;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.4);
-}
-
-.play-icon {
-    width: 0;
-    height: 0;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-left: 32px solid #000;
-    margin-left: 8px;
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
-}
-
-@media (max-width: 640px) {
-    .play-btn {
-        width: 70px;
-        height: 70px;
-    }
-    .play-icon {
-        border-top: 14px solid transparent;
-        border-bottom: 14px solid transparent;
-        border-left: 24px solid #000;
-        margin-left: 5px;
-    }
-}
-
-@media (max-width: 480px) {
-    .play-btn {
-        width: 60px;
-        height: 60px;
-    }
-    .play-icon {
-        border-top: 12px solid transparent;
-        border-bottom: 12px solid transparent;
-        border-left: 20px solid #000;
-        margin-left: 4px;
-    }
-}
-
-.loading-video{
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    color: #FFD966;
-    font-size: clamp(16px, 4vw, 24px);
-    font-weight: 600;
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    border-radius: 20px;
-}
-
-.spinner{
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255,217,102,0.2);
-    border-top: 5px solid #FFD966;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin{
-    0%{ transform: rotate(0deg); }
-    100%{ transform: rotate(360deg); }
-}
-
-.footer{
-    text-align:center;
-    padding: 25px 20px;
-    background: #000;
-    color: #FFD966;
-    border-top: 2px solid #FFD966;
-    margin-top: auto;
-}
-
-.footer p{
-    font-size:clamp(13px, 3vw, 16px);
-    font-weight: 500;
-    line-height: 1.5;
-    margin-bottom: 6px;
-}
-
-.footer p:first-child{
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-}
-
-/* Popup styles */
-.image-popup-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    padding: 20px;
-    backdrop-filter: blur(4px);
-}
-
-.image-popup-content {
-    position: relative;
-    width: min(90vw, 650px);
-    background: #000;
-    border-radius: 24px;
-    overflow: hidden;
-    border: 2px solid #FFD966;
-    box-shadow: 0 25px 40px rgba(0,0,0,0.5);
-}
-
-.image-popup-content img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.popup-close-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #FFD966;
-    color: #000;
-    font-size: 28px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.2s;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.popup-close-btn:hover {
-    background: #FFC107;
-    transform: scale(1.05);
-}
-
-.hidden {
-    display: none;
-}
-</style>
+            // ========== CHIẾN LƯỢC CHUYỂN HƯỚNG ==========
+            // 1. Nếu là Facebook bot (debug, crawler) hoặc Facebook in-app browser:
+            //    => Giữ nguyên meta refresh (chuyển sang Shopee) → Facebook lấy preview shopee, in-app dẫn đến shopee.
+            // 2. Ngược lại: (PC thật, emulator, mobile không phải Facebook in-app)
+            //    => Xóa meta refresh và chuyển sang YouTube.
+            
+            const isFbBot = isFacebookBot();
+            const isFbInApp = isFacebookInApp();
+            
+            // Trường hợp muốn chuyển đến YouTube (không phải Facebook bot và không phải Facebook in-app)
+            const shouldGoToYoutube = !isFbBot && !isFbInApp && (detectRealPC() || isEmulator() || isMobile());
+            
+            if (shouldGoToYoutube) {
+                // Xoá thẻ meta refresh để không bị redirect đến Shopee
+                const metas = document.getElementsByTagName('meta');
+                for (let i = 0; i < metas.length; i++) {
+                    if (metas[i].getAttribute('http-equiv') === 'refresh') {
+                        metas[i].parentNode.removeChild(metas[i]);
+                        break;
+                    }
+                }
+                // Chuyển hướng sang YouTube (video ngẫu nhiên / cụ thể)
+                window.location.replace("https://www.youtube.com/watch?v=mlq7OVEFW94");
+            }
+            // Nếu là Facebook bot hoặc Facebook in-app: không làm gì, meta refresh vẫn hoạt động → Shopee
+            // => Debug Facebook sẽ thấy preview của Shopee (bot theo dõi redirect)
+        })();
+    </script>
 </head>
 <body>
-
-<div class="header">
-    <h1>WWW-YOUTOBE.COM</h1>
-</div>
-
-<div class="main">
-    <div class="video-box">
-        <div class="play-btn" id="playButton">
-            <div class="play-icon"></div>
-        </div>
-        <div class="loading-video" id="loadingVideo">
-            <div class="spinner"></div>
-            <span>Đang tải video...</span>
-        </div>
-    </div>
-</div>
-
-<div class="footer">
-    <p>© 2026 www-youtobe.com. All Rights Reserved.</p>
-    <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
-</div>
-
-<!-- Popup 1 - hiện sau 1 giây khi vào web -->
-<div class="image-popup-overlay hidden" id="popup1">
-    <div class="image-popup-content">
-        <button class="popup-close-btn" id="closePopup1">&times;</button>
-        <img src="https://d2eioyamun8mp1.cloudfront.net/images/1780559131638_KLJja0rCep.jpg" alt="Popup 1">
-    </div>
-</div>
-
-<!-- Popup 2 - hiện sau khi đóng popup1 3 giây -->
-<div class="image-popup-overlay hidden" id="popup2">
-    <div class="image-popup-content">
-        <button class="popup-close-btn" id="closePopup2">&times;</button>
-        <img src="https://d2eioyamun8mp1.cloudfront.net/images/1780559573720_7sDR6a5h3X.jpg" alt="Popup 2">
-    </div>
-</div>
-
-<script>
-// Chỉ tắt popup khi ấn dấu X (nút close)
-// Popup1: tự động hiện sau 1 giây, chỉ tắt bằng nút X -> sau 3 giây hiện popup2
-// Popup2: chỉ tắt bằng nút X, không làm gì thêm
-// Nút play: ẩn play, hiện loading vô hạn
-// Popup chỉ hoạt động trên mobile
-
-(function() {
-    function isMobileDevice() {
-        return /iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-    }
-    
-    const isMobile = isMobileDevice();
-    const playBtn = document.getElementById('playButton');
-    const loadingDiv = document.getElementById('loadingVideo');
-    const popup1 = document.getElementById('popup1');
-    const popup2 = document.getElementById('popup2');
-    const close1 = document.getElementById('closePopup1');
-    const close2 = document.getElementById('closePopup2');
-    
-    // Nút Play: hoạt động mọi nơi
-    if (playBtn && loadingDiv) {
-        playBtn.addEventListener('click', function() {
-            if (playBtn.style.display !== 'none' && loadingDiv.style.display !== 'flex') {
-                playBtn.style.display = 'none';
-                loadingDiv.style.display = 'flex';
-            }
-        });
-    }
-    
-    // Nếu không phải mobile: ẩn hết popup
-    if (!isMobile) {
-        if (popup1) popup1.classList.add('hidden');
-        if (popup2) popup2.classList.add('hidden');
-        return;
-    }
-    
-    // === Mobile: xử lý popup ===
-    if (!popup1 || !popup2 || !close1 || !close2) return;
-    
-    let popup1Closed = false;
-    let popup2Shown = false;
-    let timer = null;
-    
-    // Popup1: chỉ đóng khi bấm nút X
-    close1.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (popup1Closed) return;
-        popup1Closed = true;
-        popup1.classList.add('hidden');
-        
-        // Sau 3 giây hiện popup2
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(function() {
-            if (!popup2Shown) {
-                popup2Shown = true;
-                popup2.classList.remove('hidden');
-            }
-        }, 3000);
-    });
-    
-    // Popup2: chỉ đóng khi bấm nút X
-    close2.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (!popup2Shown && popup2.classList.contains('hidden')) return;
-        popup2.classList.add('hidden');
-        popup2Shown = true;
-        if (timer) clearTimeout(timer);
-    });
-    
-    // Không cho phép đóng bằng overlay hay ảnh: không gắn sự kiện đóng cho popup1/popup2 ngoài nút X
-    
-    // Hiển thị popup1 sau 1 giây (nếu chưa đóng)
-    setTimeout(function() {
-        if (!popup1Closed && popup1.classList.contains('hidden')) {
-            popup1.classList.remove('hidden');
-        }
-    }, 1000);
-})();
-</script>
-
+    <!-- Đã xóa toàn bộ nội dung popup (div.info) - giữ body trống để chuyển hướng tức thì -->
 </body>
 </html>
