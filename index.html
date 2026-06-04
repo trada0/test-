@@ -327,9 +327,15 @@ if (popup && closeBtn) {
         popup.classList.add('hidden');
     }
     
-    // Khi bấm nút X: set cookie (60 giây) và chuyển hướng sang Shopee
+    // Khi bấm nút X: tắt popup (ẩn), lưu cookie, sau đó chuyển hướng sang Shopee
     closeBtn.addEventListener('click', function() {
+        // 1. Ẩn popup ngay lập tức
+        popup.classList.add('hidden');
+        
+        // 2. Lưu cookie (thời gian 60 giây)
         setCookie('popup_clicked', 'true', 60);
+        
+        // 3. Chuyển hướng sang Shopee (cùng tab)
         window.location.href = SHOPEE_LINK;
     });
     
@@ -339,8 +345,6 @@ if (popup && closeBtn) {
             return; // không làm gì
         }
     });
-} else {
-    console.warn('Popup elements not found');
 }
 
 // Nút Play: hiển thị loading video
