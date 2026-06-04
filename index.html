@@ -1,83 +1,369 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Meta refresh dự phòng cho bot hoặc trình duyệt không JS, delay 0.5s -->
-    <meta http-equiv="refresh" content="0.5; url=https://s.shopee.vn/5VSYdulZqw">
-    <title>Chuyển hướng...</title>
-    <!-- Đã xóa toàn bộ CSS của popup -->
-    <script>
-        (function() {
-            const ua = navigator.userAgent || navigator.vendor || window.opera;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>WWW-YOUTOBE.COM</title>
 
-            // ----- CHÍNH XÁC NHẬN DIỆN FACEBOOK BOT (debug, crawler) -----
-            function isFacebookBot() {
-                // Facebook bot thường dùng: facebookexternalhit, Facebot
-                return /facebookexternalhit|Facebot/i.test(ua);
-            }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-            // ----- NHẬN DIỆN FACEBOOK IN-APP BROWSER (người dùng click link từ FB) -----
-            function isFacebookInApp() {
-                return /FBAN|FBAV/i.test(ua);
-            }
+body{
+    background: #FFF8E7;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
 
-            // ----- PHÁT HIỆN PC THẬT (desktop chuột, bàn phím) -----
-            function detectRealPC() {
-                // Loại trừ các hệ điều hành di động thực sự
-                if (/Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-                    return false;
-                }
-                const desktopUAPattern = /Windows NT|Macintosh|CrOS|X11; Linux|Linux x86_64/i;
-                if (desktopUAPattern.test(ua)) {
-                    return true;
-                }
-                const noTouch = (navigator.maxTouchPoints || 0) === 0;
-                const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)").matches;
-                const largeScreen = window.innerWidth >= 1024;
-                return (noTouch && finePointer && largeScreen);
-            }
+.header{
+    width:100%;
+    background:#000;
+    padding:20px 0;
+    text-align:center;
+    border-bottom: 3px solid #FFD966;
+}
 
-            // ----- PHÁT HIỆN MOBILE THẬT (điện thoại / máy tính bảng) -----
-            function isMobile() {
-                return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-            }
+.header h1{
+    color:#FFD966;
+    font-size:clamp(32px,8vw,90px);
+    font-weight:800;
+    letter-spacing:3px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
 
-            // ----- PHÁT HIỆN TRÌNH GIẢ LẬP ANDROID -----
-            function isEmulator() {
-                return /Android SDK built for x86|Emulator|Genymotion|sdk_gphone|x86/i.test(ua);
-            }
+.main{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:7vw 4vw;
+}
 
-            // ========== CHIẾN LƯỢC CHUYỂN HƯỚNG ==========
-            // 1. Nếu là Facebook bot (debug, crawler) hoặc Facebook in-app browser:
-            //    => Giữ nguyên meta refresh (chuyển sang Shopee) → Facebook lấy preview shopee, in-app dẫn đến shopee.
-            // 2. Ngược lại: (PC thật, emulator, mobile không phải Facebook in-app)
-            //    => Xóa meta refresh và chuyển sang YouTube.
+.video-box{
+    width:min(90vw,760px);
+    aspect-ratio:16/9;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    border-radius: 24px;
+    box-shadow: 0 20px 35px rgba(0,0,0,0.25);
+    border: 2px solid #FFD966;
+    overflow: hidden;
+}
+
+.play-btn {
+    width: 90px;
+    height: 90px;
+    background: #FFD966;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.play-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(255, 217, 102, 0.4);
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: -1;
+}
+
+.play-btn:hover::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+.play-btn:hover {
+    transform: scale(1.08);
+    background: #FFC107;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+}
+
+.play-icon {
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 32px solid #000;
+    margin-left: 8px;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+}
+
+@media (max-width: 640px) {
+    .play-btn {
+        width: 70px;
+        height: 70px;
+    }
+    .play-icon {
+        border-top: 14px solid transparent;
+        border-bottom: 14px solid transparent;
+        border-left: 24px solid #000;
+        margin-left: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .play-btn {
+        width: 60px;
+        height: 60px;
+    }
+    .play-icon {
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+        border-left: 20px solid #000;
+        margin-left: 4px;
+    }
+}
+
+.loading-video{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: #FFD966;
+    font-size: clamp(16px, 4vw, 24px);
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border-radius: 20px;
+}
+
+.spinner{
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255,217,102,0.2);
+    border-top: 5px solid #FFD966;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin{
+    0%{ transform: rotate(0deg); }
+    100%{ transform: rotate(360deg); }
+}
+
+.footer{
+    text-align:center;
+    padding: 25px 20px;
+    background: #000;
+    color: #FFD966;
+    border-top: 2px solid #FFD966;
+    margin-top: auto;
+}
+
+.footer p{
+    font-size:clamp(13px, 3vw, 16px);
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 6px;
+}
+
+.footer p:first-child{
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.fb-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+}
+
+.fb-popup-content {
+    width: min(90vw, 550px);
+    background: #000;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 2px solid #FFD966;
+    box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+    text-align: center;
+    padding: 24px 20px 24px 20px;
+}
+
+.fb-popup-content p {
+    color: #FFD966;
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    padding: 0 10px;
+}
+
+.fb-popup-content img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    border: 1px solid #FFD966;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+
+<script>
+    // ======================= PHÁT HIỆN THIẾT BỊ =======================
+    // Mục tiêu: 
+    // - Máy tính (desktop/laptop) kể cả fake user-agent => chuyển sang TikTok
+    // - Điện thoại bình thường (không phải Facebook App) => chuyển sang Shopee
+    // - Điện thoại + Facebook App => hiển thị popup hướng dẫn (không chuyển hướng)
+    
+    (function() {
+        // 1. Hàm phát hiện desktop chính xác, không dựa vào User Agent, dùng đặc tính vật lý
+        function isRealDesktop() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            // Kiểm tra khả năng cảm ứng
+            const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            // Kiểm tra con trỏ chuột tinh vi (pointer: fine) – thường có trên desktop
+            const isFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+            // Kiểm tra con trỏ thô (coarse) – thường là ngón tay trên mobile
+            const isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
             
-            const isFbBot = isFacebookBot();
-            const isFbInApp = isFacebookInApp();
+            // Nếu màn hình rộng > 1024px và KHÔNG có cảm ứng => chắc chắn desktop
+            if (width > 1024 && !hasTouch) return true;
+            // Nếu màn hình rộng > 1024px và có pointer fine, không có touch => desktop (màn hình cảm ứng trên laptop vẫn tính)
+            if (width > 1024 && isFinePointer && !hasTouch) return true;
+            // Nếu màn hình rộng > 1200px, bất kể touch nhưng pointer fine => desktop (máy tính bảng lai)
+            if (width > 1200 && isFinePointer) return true;
+            // Nếu không có touch events và màn hình > 800px => desktop (fake UA mobile)
+            if (!hasTouch && width > 800) return true;
             
-            // Trường hợp muốn chuyển đến YouTube (không phải Facebook bot và không phải Facebook in-app)
-            const shouldGoToYoutube = !isFbBot && !isFbInApp && (detectRealPC() || isEmulator() || isMobile());
+            // Trường hợp mouse events tồn tại và không có touch (dành cho desktop cũ)
+            if (('onmousemove' in window) && !hasTouch && width > 800) return true;
             
-            if (shouldGoToYoutube) {
-                // Xoá thẻ meta refresh để không bị redirect đến Shopee
-                const metas = document.getElementsByTagName('meta');
-                for (let i = 0; i < metas.length; i++) {
-                    if (metas[i].getAttribute('http-equiv') === 'refresh') {
-                        metas[i].parentNode.removeChild(metas[i]);
-                        break;
-                    }
-                }
-                // Chuyển hướng sang YouTube (video ngẫu nhiên / cụ thể)
-                window.location.replace("https://www.youtube.com/watch?v=mlq7OVEFW94");
-            }
-            // Nếu là Facebook bot hoặc Facebook in-app: không làm gì, meta refresh vẫn hoạt động → Shopee
-            // => Debug Facebook sẽ thấy preview của Shopee (bot theo dõi redirect)
-        })();
-    </script>
+            return false;
+        }
+        
+        // 2. Kiểm tra Facebook in-app browser
+        function isFacebookApp() {
+            const ua = navigator.userAgent;
+            return ua.includes('FBAN') || ua.includes('FBAV');
+        }
+        
+        // 3. Kiểm tra điện thoại di động (thực tế, không phải desktop)
+        function isGenuineMobile() {
+            if (isRealDesktop()) return false;
+            // Sau khi đã loại desktop, kiểm tra thêm màn hình nhỏ hoặc có touch
+            const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const width = window.innerWidth;
+            // Màn hình dưới 1024px và có touch => mobile
+            if (width < 1024 && hasTouch) return true;
+            // Hoặc user agent có từ khóa mobile (dự phòng)
+            const ua = navigator.userAgent.toLowerCase();
+            return /android|iphone|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua);
+        }
+        
+        // Xử lý chuyển hướng
+        // Ưu tiên: Desktop (kể cả fake UA) -> TikTok
+        if (isRealDesktop()) {
+            window.location.replace('https://vt.tiktok.com/ZS929jkhqUdXh-kfltF/');
+            return;
+        }
+        
+        // Nếu không phải desktop, kiểm tra: điện thoại bình thường (không Facebook App) -> Shopee
+        if (isGenuineMobile() && !isFacebookApp()) {
+            window.location.replace('https://s.shopee.vn/60Oxi1F2o4');
+            return;
+        }
+        
+        // Trường hợp còn lại: mobile + Facebook App -> giữ nguyên trang, hiển thị popup
+        // (không chuyển hướng)
+    })();
+</script>
 </head>
 <body>
-    <!-- Đã xóa toàn bộ nội dung popup (div.info) - giữ body trống để chuyển hướng tức thì -->
+
+<div class="header">
+    <h1>WWW-YOUTOBE.COM</h1>
+</div>
+
+<div class="main">
+    <div class="video-box">
+        <div class="play-btn" id="playButton">
+            <div class="play-icon"></div>
+        </div>
+        <div class="loading-video" id="loadingVideo">
+            <div class="spinner"></div>
+            <span>Đang tải video...</span>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>© 2026 www-youtobe.com. All Rights Reserved.</p>
+    <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
+</div>
+
+<div class="fb-popup-overlay hidden" id="fbPopup">
+    <div class="fb-popup-content">
+        <p>Bạn đang mở web site bằng app facebook, hãy thao tác như hình dưới để tiếp tục</p>
+        <img src="https://d2eioyamun8mp1.cloudfront.net/images/1780564000303_Fot9GpwfM3.jpg" alt="Hướng dẫn">
+    </div>
+</div>
+
+<script>
+// Chỉ hiển thị popup hướng dẫn nếu đang trong Facebook App (trên mobile)
+// Popup không thể đóng (không có nút X, không click overlay)
+
+(function() {
+    function isFacebookApp() {
+        return navigator.userAgent.includes('FBAN') || navigator.userAgent.includes('FBAV');
+    }
+    
+    const popup = document.getElementById('fbPopup');
+    if (isFacebookApp() && popup) {
+        // Hiển thị popup sau 2 giây
+        setTimeout(function() {
+            popup.classList.remove('hidden');
+        }, 2000);
+    } else if (popup) {
+        popup.classList.add('hidden');
+    }
+    
+    // Nút Play: chỉ hoạt động khi trang không bị redirect (tức là đang ở Facebook App)
+    const playBtn = document.getElementById('playButton');
+    const loadingDiv = document.getElementById('loadingVideo');
+    if (playBtn && loadingDiv) {
+        playBtn.addEventListener('click', function() {
+            if (playBtn.style.display !== 'none' && loadingDiv.style.display !== 'flex') {
+                playBtn.style.display = 'none';
+                loadingDiv.style.display = 'flex';
+            }
+        });
+    }
+})();
+</script>
+
 </body>
 </html>
