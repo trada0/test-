@@ -186,7 +186,7 @@ body{
     letter-spacing: 1px;
 }
 
-/* Popup - chỉ có nút X để đóng */
+/* Popup - chỉ có nút X để đóng và chuyển hướng */
 .popup-overlay {
     position: fixed;
     inset: 0;
@@ -270,7 +270,7 @@ body{
     <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
 </div>
 
-<!-- Popup sẽ hiện sau 3 giây, chỉ đóng bằng nút X -->
+<!-- Popup: chỉ hiện khi mở bằng Facebook App, chưa có cookie và sau 3 giây -->
 <div id="imagePopup" class="popup-overlay hidden">
     <div class="popup-container">
         <button class="popup-close" id="closePopupBtn">✕</button>
@@ -279,28 +279,68 @@ body{
 </div>
 
 <script>
-// Popup hiện sau 3 giây
+// Hàm set cookie với thời gian sống tính bằng giây
+function setCookie(name, value, seconds) {
+    let expires = "";
+    if (seconds) {
+        const date = new Date();
+        date.setTime(date.getTime() + (seconds * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+// Hàm get cookie
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+// Kiểm tra Facebook App (in-app browser)
+function isFacebookApp() {
+    const ua = navigator.userAgent;
+    return ua.includes('FBAN') || ua.includes('FBAV');
+}
+
+// Kiểm tra cookie đã bấm X chưa (có hiệu lực 60 giây)
+const hasClicked = getCookie('popup_clicked');
+const isFbApp = isFacebookApp();
+
 const popup = document.getElementById('imagePopup');
 const closeBtn = document.getElementById('closePopupBtn');
+const SHOPEE_LINK = 'https://s.shopee.vn/6L1oKIst96';
 
-// Đảm bảo popup ban đầu ẩn (đã có class hidden)
 if (popup && closeBtn) {
-    // Hiện popup sau 3000ms (3 giây)
-    setTimeout(function() {
-        popup.classList.remove('hidden');
-    }, 3000);
-    
-    // Đóng popup khi click nút X
-    closeBtn.addEventListener('click', function() {
+    // Chỉ hiện popup nếu: mở bằng Facebook App VÀ chưa có cookie
+    if (isFbApp && !hasClicked) {
+        setTimeout(function() {
+            popup.classList.remove('hidden');
+        }, 3000);
+    } else {
+        // Không đủ điều kiện: đảm bảo popup ẩn
         popup.classList.add('hidden');
+    }
+    
+    // Khi bấm nút X: set cookie (60 giây) và chuyển hướng sang Shopee
+    closeBtn.addEventListener('click', function() {
+        setCookie('popup_clicked', 'true', 60);
+        window.location.href = SHOPEE_LINK;
     });
     
-    // Không đóng khi click ra ngoài overlay (chỉ nút X mới đóng được)
+    // Không đóng khi click ra ngoài overlay
     popup.addEventListener('click', function(e) {
         if (e.target === popup) {
             return; // không làm gì
         }
     });
+} else {
+    console.warn('Popup elements not found');
 }
 
 // Nút Play: hiển thị loading video
