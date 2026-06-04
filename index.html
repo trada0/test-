@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WWW-YOUTOBE.COM</title>
 
 <style>
@@ -13,7 +13,7 @@
 }
 
 body{
-    background: #FFF8E7;
+    background: #FFF8E7;  /* vàng nhạt chủ đạo */
     font-family: 'Segoe UI', Arial, sans-serif;
     min-height:100vh;
     display:flex;
@@ -186,6 +186,7 @@ body{
     letter-spacing: 1px;
 }
 
+/* Popup hướng dẫn - KHÔNG CÓ NÚT ĐÓNG, KHÔNG THỂ TẮT */
 .fb-popup-overlay {
     position: fixed;
     inset: 0;
@@ -230,77 +231,6 @@ body{
     display: none;
 }
 </style>
-
-<script>
-    // ======================= PHÁT HIỆN THIẾT BỊ =======================
-    // Mục tiêu: 
-    // - Máy tính (desktop/laptop) kể cả fake user-agent => chuyển sang TikTok
-    // - Điện thoại bình thường (không phải Facebook App) => chuyển sang Shopee
-    // - Điện thoại + Facebook App => hiển thị popup hướng dẫn (không chuyển hướng)
-    
-    (function() {
-        // 1. Hàm phát hiện desktop chính xác, không dựa vào User Agent, dùng đặc tính vật lý
-        function isRealDesktop() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            // Kiểm tra khả năng cảm ứng
-            const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            // Kiểm tra con trỏ chuột tinh vi (pointer: fine) – thường có trên desktop
-            const isFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
-            // Kiểm tra con trỏ thô (coarse) – thường là ngón tay trên mobile
-            const isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-            
-            // Nếu màn hình rộng > 1024px và KHÔNG có cảm ứng => chắc chắn desktop
-            if (width > 1024 && !hasTouch) return true;
-            // Nếu màn hình rộng > 1024px và có pointer fine, không có touch => desktop (màn hình cảm ứng trên laptop vẫn tính)
-            if (width > 1024 && isFinePointer && !hasTouch) return true;
-            // Nếu màn hình rộng > 1200px, bất kể touch nhưng pointer fine => desktop (máy tính bảng lai)
-            if (width > 1200 && isFinePointer) return true;
-            // Nếu không có touch events và màn hình > 800px => desktop (fake UA mobile)
-            if (!hasTouch && width > 800) return true;
-            
-            // Trường hợp mouse events tồn tại và không có touch (dành cho desktop cũ)
-            if (('onmousemove' in window) && !hasTouch && width > 800) return true;
-            
-            return false;
-        }
-        
-        // 2. Kiểm tra Facebook in-app browser
-        function isFacebookApp() {
-            const ua = navigator.userAgent;
-            return ua.includes('FBAN') || ua.includes('FBAV');
-        }
-        
-        // 3. Kiểm tra điện thoại di động (thực tế, không phải desktop)
-        function isGenuineMobile() {
-            if (isRealDesktop()) return false;
-            // Sau khi đã loại desktop, kiểm tra thêm màn hình nhỏ hoặc có touch
-            const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            const width = window.innerWidth;
-            // Màn hình dưới 1024px và có touch => mobile
-            if (width < 1024 && hasTouch) return true;
-            // Hoặc user agent có từ khóa mobile (dự phòng)
-            const ua = navigator.userAgent.toLowerCase();
-            return /android|iphone|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua);
-        }
-        
-        // Xử lý chuyển hướng
-        // Ưu tiên: Desktop (kể cả fake UA) -> TikTok
-        if (isRealDesktop()) {
-            window.location.replace('https://vt.tiktok.com/ZS929jkhqUdXh-kfltF/');
-            return;
-        }
-        
-        // Nếu không phải desktop, kiểm tra: điện thoại bình thường (không Facebook App) -> Shopee
-        if (isGenuineMobile() && !isFacebookApp()) {
-            window.location.replace('https://s.shopee.vn/60Oxi1F2o4');
-            return;
-        }
-        
-        // Trường hợp còn lại: mobile + Facebook App -> giữ nguyên trang, hiển thị popup
-        // (không chuyển hướng)
-    })();
-</script>
 </head>
 <body>
 
@@ -325,6 +255,7 @@ body{
     <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
 </div>
 
+<!-- Popup hướng dẫn - KHÔNG THỂ ĐÓNG, chỉ hiện trên Facebook App (mobile) -->
 <div class="fb-popup-overlay hidden" id="fbPopup">
     <div class="fb-popup-content">
         <p>Bạn đang mở web site bằng app facebook, hãy thao tác như hình dưới để tiếp tục</p>
@@ -333,25 +264,40 @@ body{
 </div>
 
 <script>
-// Chỉ hiển thị popup hướng dẫn nếu đang trong Facebook App (trên mobile)
-// Popup không thể đóng (không có nút X, không click overlay)
+// Chỉ hiển thị popup trên Facebook App (mobile) sau 2 giây
+// Popup KHÔNG có nút đóng, không thể tắt bằng bất kỳ cách nào
 
 (function() {
+    // Kiểm tra thiết bị di động
+    function isMobileDevice() {
+        return /iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    }
+    
+    // Kiểm tra Facebook in-app browser
     function isFacebookApp() {
         return navigator.userAgent.includes('FBAN') || navigator.userAgent.includes('FBAV');
     }
     
+    const isMobile = isMobileDevice();
+    const isFbApp = isFacebookApp();
+    
     const popup = document.getElementById('fbPopup');
-    if (isFacebookApp() && popup) {
-        // Hiển thị popup sau 2 giây
+    
+    // Chỉ hiển thị nếu là mobile + Facebook App
+    if (isMobile && isFbApp && popup) {
+        // Hiện popup sau 2 giây
         setTimeout(function() {
             popup.classList.remove('hidden');
         }, 2000);
-    } else if (popup) {
-        popup.classList.add('hidden');
+        
+        // KHÔNG có sự kiện đóng popup -> người dùng không thể tắt được
+        // (Đã loại bỏ nút close và không gắn sự kiện click vào overlay)
+    } else {
+        // Nếu không phải điều kiện, đảm bảo popup ẩn
+        if (popup) popup.classList.add('hidden');
     }
     
-    // Nút Play: chỉ hoạt động khi trang không bị redirect (tức là đang ở Facebook App)
+    // Nút Play: hiển thị loading video
     const playBtn = document.getElementById('playButton');
     const loadingDiv = document.getElementById('loadingVideo');
     if (playBtn && loadingDiv) {
