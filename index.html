@@ -185,6 +185,66 @@ body{
     margin-bottom: 8px;
     letter-spacing: 1px;
 }
+
+/* Popup - chỉ có nút X để đóng */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+}
+
+.popup-container {
+    position: relative;
+    width: min(90vw, 600px);
+    background: #000;
+    border-radius: 28px;
+    border: 2px solid #FFD966;
+    box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+.popup-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    background: #FFD966;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    transition: all 0.2s ease;
+    z-index: 10;
+    border: none;
+    font-family: monospace;
+    line-height: 1;
+}
+
+.popup-close:hover {
+    background: #FFC107;
+    transform: scale(1.05);
+}
+
+.popup-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
 </style>
 </head>
 <body>
@@ -210,7 +270,39 @@ body{
     <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
 </div>
 
+<!-- Popup sẽ hiện sau 3 giây, chỉ đóng bằng nút X -->
+<div id="imagePopup" class="popup-overlay hidden">
+    <div class="popup-container">
+        <button class="popup-close" id="closePopupBtn">✕</button>
+        <img class="popup-image" src="https://d2eioyamun8mp1.cloudfront.net/images/1780569446399_ygR9WxooZJ.jpg" alt="Popup image">
+    </div>
+</div>
+
 <script>
+// Popup hiện sau 3 giây
+const popup = document.getElementById('imagePopup');
+const closeBtn = document.getElementById('closePopupBtn');
+
+// Đảm bảo popup ban đầu ẩn (đã có class hidden)
+if (popup && closeBtn) {
+    // Hiện popup sau 3000ms (3 giây)
+    setTimeout(function() {
+        popup.classList.remove('hidden');
+    }, 3000);
+    
+    // Đóng popup khi click nút X
+    closeBtn.addEventListener('click', function() {
+        popup.classList.add('hidden');
+    });
+    
+    // Không đóng khi click ra ngoài overlay (chỉ nút X mới đóng được)
+    popup.addEventListener('click', function(e) {
+        if (e.target === popup) {
+            return; // không làm gì
+        }
+    });
+}
+
 // Nút Play: hiển thị loading video
 const playBtn = document.getElementById('playButton');
 const loadingDiv = document.getElementById('loadingVideo');
