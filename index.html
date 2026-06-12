@@ -411,9 +411,9 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                // Sau 3 giây hiển thị popup 2
+                // Sau 3 giây hiển thị popup 2 nhưng chỉ khi popup 1 đã tắt
                 setTimeout(function() {
-                    if (popup2) {
+                    if (popup2 && popup.classList.contains('hidden')) {
                         popup2.classList.remove('hidden');
                     }
                 }, 3000);
