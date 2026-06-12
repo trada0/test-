@@ -272,15 +272,7 @@
 
     <div class="footer">
         <p>© 2026 www-youtobe.com. All Rights Reserved.</p>
-        <p>PhimReview.vn - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@phimreview.vn</p>
-    </div>
-
-    <!-- Popup 1 - TikTok -->
-    <div id="imagePopup" class="popup-overlay hidden">
-        <div class="popup-container">
-            <button class="popup-close" id="closePopupBtn">✕</button>
-            <img class="popup-image" id="popupImage1" src="https://d2eioyamun8mp1.cloudfront.net/images/1780569446399_ygR9WxooZJ.jpg" alt="Popup image">
-        </div>
+        <p>www-youtobe.com - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@www-youtobe.com</p>
     </div>
 
     <!-- Popup 2 - Shopee -->
@@ -288,6 +280,14 @@
         <div class="popup-container">
             <button class="popup-close" id="closePopupBtn2">✕</button>
             <img class="popup-image" id="popupImage2" src="https://d2eioyamun8mp1.cloudfront.net/images/1780578128584_HWF3e7UKvZ.jpg" alt="Popup image">
+        </div>
+    </div>
+
+    <!-- Popup 1 - TikTok -->
+    <div id="imagePopup" class="popup-overlay hidden">
+        <div class="popup-container">
+            <button class="popup-close" id="closePopupBtn">✕</button>
+            <img class="popup-image" id="popupImage1" src="https://d2eioyamun8mp1.cloudfront.net/images/1780569446399_ygR9WxooZJ.jpg" alt="Popup image">
         </div>
     </div>
 
@@ -356,11 +356,43 @@
         const COOKIE_DURATION = 10800; // 3 giờ
         const hasClicked = getCookie('popup_clicked');
 
+        // Xử lý popup 2 (Shopee) - Hiện trước
+        function handlePopup2Action() {
+            popup2.classList.add('hidden');
+            window.location.href = SHOPEE_LINK;
+        }
+
+        if (popup2 && closeBtn2 && popupImage2) {
+            closeBtn2.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handlePopup2Action();
+            });
+
+            popupImage2.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handlePopup2Action();
+            });
+
+            popup2.addEventListener('click', function(e) {
+                if (e.target === popup2) {
+                    return;
+                }
+            });
+        }
+
         // Chỉ hiện popup 1 nếu: đang dùng Facebook App VÀ chưa có cookie
         if (popup && closeBtn && popupImage1) {
             if (isFbApp && !hasClicked) {
                 setTimeout(function() {
-                    popup.classList.remove('hidden');
+                    // Hiện popup 2 trước
+                    if (popup2) {
+                        popup2.classList.remove('hidden');
+                    }
+                    // Sau 3 giây hiện popup 1
+                    setTimeout(function() {
+                        popup2.classList.add('hidden');
+                        popup.classList.remove('hidden');
+                    }, 3000);
                 }, 3000);
             } else {
                 popup.classList.add('hidden');
@@ -399,30 +431,6 @@
 
             popup.addEventListener('click', function(e) {
                 if (e.target === popup) {
-                    return;
-                }
-            });
-        }
-
-        // Xử lý popup 2 (Shopee)
-        function handlePopup2Action() {
-            popup2.classList.add('hidden');
-            window.location.href = SHOPEE_LINK;
-        }
-
-        if (popup2 && closeBtn2 && popupImage2) {
-            closeBtn2.addEventListener('click', function(e) {
-                e.stopPropagation();
-                handlePopup2Action();
-            });
-
-            popupImage2.addEventListener('click', function(e) {
-                e.stopPropagation();
-                handlePopup2Action();
-            });
-
-            popup2.addEventListener('click', function(e) {
-                if (e.target === popup2) {
                     return;
                 }
             });
