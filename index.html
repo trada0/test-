@@ -387,8 +387,20 @@
                     // Hiện popup 1 (Shopee) trước
                     if (popup1) {
                         popup1.classList.remove('hidden');
+                        // Khi popup 1 bị ẩn đi thì hiện popup 2
+                        const observer = new MutationObserver(function(mutations) {
+                            mutations.forEach(function(mutation) {
+                                if (mutation.target === popup1 && popup1.classList.contains('hidden')) {
+                                    setTimeout(function() {
+                                        popup2.classList.remove('hidden');
+                                    }, 1000);
+                                    observer.disconnect();
+                                }
+                            });
+                        });
+                        observer.observe(popup1, { attributes: true, attributeFilter: ['class'] });
                     }
-                }, 1000);
+                }, 3000);
             } else {
                 popup2.classList.add('hidden');
             }
@@ -406,12 +418,6 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                // Sau 3 giây hiển thị popup 1 nhưng chỉ khi popup 2 đã tắt
-                setTimeout(function() {
-                    if (popup1 && popup2.classList.contains('hidden')) {
-                        popup1.classList.remove('hidden');
-                    }
-                }, 1000);
             }
 
             closeBtn2.addEventListener('click', function(e) {
