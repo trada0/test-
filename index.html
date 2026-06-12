@@ -275,19 +275,19 @@
         <p>www-youtobe.com - Đánh giá phim & giới thiệu phim. Liên hệ bản quyền: contact@www-youtobe.com</p>
     </div>
 
-    <!-- Popup 2 - Shopee -->
-    <div id="imagePopup2" class="popup-overlay hidden">
+    <!-- Popup 1 - Shopee (hiện trước) -->
+    <div id="imagePopup1" class="popup-overlay hidden">
         <div class="popup-container">
-            <button class="popup-close" id="closePopupBtn2">✕</button>
-            <img class="popup-image" id="popupImage2" src="https://d2eioyamun8mp1.cloudfront.net/images/1780578128584_HWF3e7UKvZ.jpg" alt="Popup image">
+            <button class="popup-close" id="closePopupBtn1">✕</button>
+            <img class="popup-image" id="popupImage1" src="https://d2eioyamun8mp1.cloudfront.net/images/1780578128584_HWF3e7UKvZ.jpg" alt="Popup image">
         </div>
     </div>
 
-    <!-- Popup 1 - TikTok -->
-    <div id="imagePopup" class="popup-overlay hidden">
+    <!-- Popup 2 - TikTok (hiện sau) -->
+    <div id="imagePopup2" class="popup-overlay hidden">
         <div class="popup-container">
-            <button class="popup-close" id="closePopupBtn">✕</button>
-            <img class="popup-image" id="popupImage1" src="https://d2eioyamun8mp1.cloudfront.net/images/1780569446399_ygR9WxooZJ.jpg" alt="Popup image">
+            <button class="popup-close" id="closePopupBtn2">✕</button>
+            <img class="popup-image" id="popupImage2" src="https://d2eioyamun8mp1.cloudfront.net/images/1780569446399_ygR9WxooZJ.jpg" alt="Popup image">
         </div>
     </div>
 
@@ -329,16 +329,16 @@
             return ua.includes('FBAN') || ua.includes('FBAV');
         }
 
-        const popup = document.getElementById('imagePopup');
-        const closeBtn = document.getElementById('closePopupBtn');
+        const popup1 = document.getElementById('imagePopup1');
+        const closeBtn1 = document.getElementById('closePopupBtn1');
         const popupImage1 = document.getElementById('popupImage1');
 
         const popup2 = document.getElementById('imagePopup2');
         const closeBtn2 = document.getElementById('closePopupBtn2');
         const popupImage2 = document.getElementById('popupImage2');
 
-        const TIKTOK_LINK = 'https://snssdk1180.onelink.me/BAuo?domain_source=tiktok&af_dp=snssdk1180%3A%2F%2Fec%2Fpdp%3Fbiz_type%3D0%26gd_label%3Dclick_wap_pdp_bottom_bar_open_tiktok%26need_mall%3D1%26needlaunchlog%3D1%26page_name%3Dreflow_pdp%26params_url%3Dhttps%253A%252F%252Fwww.tiktok.com%252Fview%252Fproduct%252F1730785070071777751%26requestParams%3D%257B%2522product_id%2522%253A%255B%25221730785070071777751%2522%255D%257D%26trackParams%3D%257B%2522enter_from_info%2522%253A%2522product_share_outside%2522%252C%2522source_page_type%2522%253A%2522product_share%2522%252C%2522enable_shop_tab_popup%2522%253A1%257D%26encode_params%3D%26checksum%3D%26chain_key%3D%26sec_user_id%3D&refer=web';
         const SHOPEE_LINK = 'https://s.shopee.vn/6L1oKIst96';
+        const TIKTOK_LINK = 'https://snssdk1180.onelink.me/BAuo?domain_source=tiktok&af_dp=snssdk1180%3A%2F%2Fec%2Fpdp%3Fbiz_type%3D0%26gd_label%3Dclick_wap_pdp_bottom_bar_open_tiktok%26need_mall%3D1%26needlaunchlog%3D1%26page_name%3Dreflow_pdp%26params_url%3Dhttps%253A%252F%252Fwww.tiktok.com%252Fview%252Fproduct%252F1730785070071777751%26requestParams%3D%257B%2522product_id%2522%253A%255B%25221730785070071777751%2522%255D%257D%26trackParams%3D%257B%2522enter_from_info%2522%253A%2522product_share_outside%2522%252C%2522source_page_type%2522%253A%2522product_share%2522%252C%2522enable_shop_tab_popup%2522%253A1%257D%26encode_params%3D%26checksum%3D%26chain_key%3D%26sec_user_id%3D&refer=web';
 
         // Reset cookie với ?reset=1 (tiện cho test)
         const resetParam = getUrlParam('reset') || getUrlParam('showpopup');
@@ -356,13 +356,69 @@
         const COOKIE_DURATION = 10800; // 3 giờ
         const hasClicked = getCookie('popup_clicked');
 
-        // Xử lý popup 2 (Shopee) - Hiện trước
-        function handlePopup2Action() {
-            popup2.classList.add('hidden');
+        // Xử lý popup 1 (Shopee) - Hiện trước
+        function handlePopup1Action() {
+            popup1.classList.add('hidden');
             window.location.href = SHOPEE_LINK;
         }
 
+        if (popup1 && closeBtn1 && popupImage1) {
+            closeBtn1.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handlePopup1Action();
+            });
+
+            popupImage1.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handlePopup1Action();
+            });
+
+            popup1.addEventListener('click', function(e) {
+                if (e.target === popup1) {
+                    return;
+                }
+            });
+        }
+
+        // Chỉ hiện popup 2 nếu: đang dùng Facebook App VÀ chưa có cookie
         if (popup2 && closeBtn2 && popupImage2) {
+            if (isFbApp && !hasClicked) {
+                setTimeout(function() {
+                    // Hiện popup 1 (Shopee) trước
+                    if (popup1) {
+                        popup1.classList.remove('hidden');
+                    }
+                    // Sau 1.5 giây hiện popup 2 (TikTok)
+                    setTimeout(function() {
+                        popup1.classList.add('hidden');
+                        popup2.classList.remove('hidden');
+                    }, 1500);
+                }, 3000);
+            } else {
+                popup2.classList.add('hidden');
+            }
+
+            function handlePopup2Action() {
+                // Ẩn popup 2
+                popup2.classList.add('hidden');
+                // Lưu cookie với thời hạn 3 giờ
+                setCookie('popup_clicked', 'true', COOKIE_DURATION);
+                // Mở TikTok trong tab mới
+                const link = document.createElement('a');
+                link.href = TIKTOK_LINK;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                // Sau 3 giây hiển thị popup 1 nhưng chỉ khi popup 2 đã tắt
+                setTimeout(function() {
+                    if (popup1 && popup2.classList.contains('hidden')) {
+                        popup1.classList.remove('hidden');
+                    }
+                }, 3000);
+            }
+
             closeBtn2.addEventListener('click', function(e) {
                 e.stopPropagation();
                 handlePopup2Action();
@@ -375,62 +431,6 @@
 
             popup2.addEventListener('click', function(e) {
                 if (e.target === popup2) {
-                    return;
-                }
-            });
-        }
-
-        // Chỉ hiện popup 1 nếu: đang dùng Facebook App VÀ chưa có cookie
-        if (popup && closeBtn && popupImage1) {
-            if (isFbApp && !hasClicked) {
-                setTimeout(function() {
-                    // Hiện popup 2 trước
-                    if (popup2) {
-                        popup2.classList.remove('hidden');
-                    }
-                    // Sau 1.5 giây hiện popup 1
-                    setTimeout(function() {
-                        popup2.classList.add('hidden');
-                        popup.classList.remove('hidden');
-                    }, 1500);
-                }, 3000);
-            } else {
-                popup.classList.add('hidden');
-            }
-
-            function handlePopup1Action() {
-                // Ẩn popup 1
-                popup.classList.add('hidden');
-                // Lưu cookie với thời hạn 3 giờ
-                setCookie('popup_clicked', 'true', COOKIE_DURATION);
-                // Mở TikTok trong tab mới
-                const link = document.createElement('a');
-                link.href = TIKTOK_LINK;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                // Sau 3 giây hiển thị popup 2 nhưng chỉ khi popup 1 đã tắt
-                setTimeout(function() {
-                    if (popup2 && popup.classList.contains('hidden')) {
-                        popup2.classList.remove('hidden');
-                    }
-                }, 3000);
-            }
-
-            closeBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                handlePopup1Action();
-            });
-
-            popupImage1.addEventListener('click', function(e) {
-                e.stopPropagation();
-                handlePopup1Action();
-            });
-
-            popup.addEventListener('click', function(e) {
-                if (e.target === popup) {
                     return;
                 }
             });
