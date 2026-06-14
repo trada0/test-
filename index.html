@@ -275,10 +275,74 @@
     </div>
 
     <script>
+        // ========================
+        // Yêu cầu mới (không sửa giao diện, chỉ thêm logic)
+        // 1. Chỉ mở link khi đang dùng Facebook App
+        // 2. Mỗi người dùng chỉ mở link 1 lần, reset sau 3 tiếng (dùng localStorage)
+        // ========================
+        
+        const LINK_URL = 'https://s.shopee.vn/2qSCS86ZyY';
+        const STORAGE_KEY = 'youToBe_link_expiry';
+        const THREE_HOURS_MS = 3 * 60 * 60 * 1000;
+
+        // Kiểm tra có đang mở trong Facebook App không (in-app browser)
+        function isFacebookApp() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            // Các dấu hiệu phổ biến của Facebook in-app browser
+            return /FBAN|FBAV|FBIOS|FB_IAB|Messenger/i.test(ua);
+        }
+
+        // Kiểm tra xem đã hết thời gian chờ chưa (block hay không)
+        function isLinkBlocked() {
+            const expiry = localStorage.getItem(STORAGE_KEY);
+            if (!expiry) return false;
+            
+            const now = Date.now();
+            const expiryTime = parseInt(expiry, 10);
+            
+            // Nếu đã quá hạn -> xóa key và không block
+            if (now >= expiryTime) {
+                localStorage.removeItem(STORAGE_KEY);
+                return false;
+            }
+            // Vẫn còn hiệu lực -> bị block
+            return true;
+        }
+
+        // Ghi nhận thời điểm người dùng vừa mở link, block trong 3 giờ kể từ bây giờ
+        function setBlockUntilNext3Hours() {
+            const expiryTime = Date.now() + THREE_HOURS_MS;
+            localStorage.setItem(STORAGE_KEY, expiryTime.toString());
+        }
+
+        // Xử lý khi nhấn nút
+        function handleOpenLink() {
+            // 1. Kiểm tra: chỉ mở được khi dùng Facebook App
+            if (!isFacebookApp()) {
+                alert(' Đã có lỗi.\nVui lòng mở lại sau.');
+                return;
+            }
+
+            // 2. Kiểm tra xem đã bấm mở link trong 3 tiếng gần đây chưa
+            if (isLinkBlocked()) {
+                alert('lỗi.\nVui lòng mở lại sau.');
+                return;
+            }
+
+            // 3. Hợp lệ: chặn các lần nhấn tiếp theo trong 3h và chuyển hướng
+            setBlockUntilNext3Hours();
+            window.location.href = LINK_URL;
+        }
+
+        // Gắn sự kiện cho nút (giữ nguyên các hiệu ứng UI, chỉ thay logic)
         const btn = document.getElementById('openAppBtn');
-        btn.addEventListener('click', function() {
-            window.location.href = 'https://s.shopee.vn/2qSCS86ZyY';
-        });
+        // Xóa listener cũ nếu có (trong code hiện tại chỉ có 1, nhưng gán lại để chắc chắn)
+        if (btn) {
+            // Loại bỏ mọi listener cũ (nếu có) trước khi thêm mới
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', handleOpenLink);
+        }
     </script>
 </body>
 </html>
